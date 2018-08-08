@@ -8,8 +8,13 @@ products = []
 cur_products = []
 
 app = Flask(__name__)
-@app.route('/', methods=['GET', 'POST'])
+with open('access-token.txt', 'r') as access_file:
+  access = access_file.read().replace('\n', '')
+ACCESS_TOKEN = access
+VERIFY_TOKEN = 'VERIFY_TOKEN'
+bot = Bot(ACCESS_TOKEN)
 
+@app.route('/', methods=['GET', 'POST'])
 def receive_message():
     if request.method == 'GET':
         # before allowing people to message your bot, Facebook has implemented a verify token
@@ -26,12 +31,10 @@ def receive_message():
                     #Facebook Messenger ID for user so we know where to send response back to
                     recipient_id = message['sender']['id']
                     if message['message'].get('text'):
-                        response_sent_text = get_message()
-                        send_message(recipient_id, response_sent_text)
+                        send_message(recipient_id)
                     #if user sends us a GIF, photo,video, or any other non-text item
                     if message['message'].get('attachments'):
-                        response_sent_nontext = get_message()
-                        send_message(recipient_id, response_sent_nontext)
+                        send_message(recipient_id)
         return "Message Processed"
 
 def verify_fb_token(token_sent):
@@ -41,12 +44,7 @@ def verify_fb_token(token_sent):
         return request.args.get("hub.challenge")
     return 'Invalid verification token'
 
-def get_message():
-    sample_responses = ["You are stunning!", "We're proud of you.", "Keep on being you!", "We're greatful to know you :)"]
-    # return selected item to the user
-    return random.choice(sample_responses)
-
-def send_message(recipient_id, response):
+def send_message(recipient_id):
     #sends user the text message provided via input response parameter
     response = ""
     for product in products:
