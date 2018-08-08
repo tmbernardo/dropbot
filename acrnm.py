@@ -16,6 +16,21 @@ ACCESS_TOKEN = access
 VERIFY_TOKEN = verify
 bot = Bot(ACCESS_TOKEN)
 
+def get_current():
+    page = requests.get('http://acrnm.com')
+    tree = html.fromstring(page.content)
+
+    # create a list of products:
+    cur_products = tree.xpath('//div[@class="name"]/text()')
+    products = cur_products
+    # if(products != cur_products):
+    #     products = cur_products
+    #     # send notification to messenger
+
+    # # time.sleep(seconds)
+    # print(products)
+products = get_current()
+
 @app.route('/', methods=['GET', 'POST'])
 def receive_message():
     if request.method == 'GET':
@@ -41,18 +56,7 @@ def receive_message():
         return "Message Processed"
 
 def get_products():
-    page = requests.get('http://acrnm.com')
-    tree = html.fromstring(page.content)
-
-    # create a list of products:
-    cur_products = tree.xpath('//div[@class="name"]/text()')
-    return cur_products
-    # if(products != cur_products):
-    #     products = cur_products
-    #     # send notification to messenger
-
-    # # time.sleep(seconds)
-    # print(products)
+    return products
 
 def verify_fb_token(token_sent):
     # take token sent by facebook and verify it matches the verify token you sent
