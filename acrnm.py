@@ -57,7 +57,7 @@ def receive_message():
             for message in messaging:
                 print(message)
                 try:
-                    t=threading.Thread(target=response, args=(message))
+                    t=threading.Thread(target=response, args=(message, ))
                     t.daemon=True
                     t.start()
                 except:
