@@ -17,7 +17,8 @@ ACCESS_TOKEN = access
 VERIFY_TOKEN = verify
 bot = Bot(ACCESS_TOKEN)
 
-def get_current(products):
+def get_current():
+    global products
     while(True):
         page = requests.get('http://acrnm.com')
         tree = html.fromstring(page.content)
@@ -79,7 +80,6 @@ def send_message(recipient_id, products):
     return "success"
 
 if __name__ == '__main__':
-    
     try:
         monitor=threading.Thread(target=get_current)
         monitor.daemon=True
