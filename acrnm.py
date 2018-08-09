@@ -17,19 +17,16 @@ ACCESS_TOKEN = access
 VERIFY_TOKEN = verify
 bot = Bot(ACCESS_TOKEN)
 
-def get_current():
-    page = requests.get('http://acrnm.com')
-    tree = html.fromstring(page.content)
+def get_current(products):
+    while(True):
+        page = requests.get('http://acrnm.com')
+        tree = html.fromstring(page.content)
 
-    # create a list of products:
-    cur_products = tree.xpath('//div[@class="name"]/text()')
-    return cur_products
-    # if(products != cur_products):
-    #     products = cur_products
-    #     # send notification to messenger
-
-    # # time.sleep(seconds)
-    # print(products)
+        # create a list of products:
+        cur_products = tree.xpath('//div[@class="name"]/text()')
+        if(products != cur_products):
+            products = cur_products
+        time.sleep(seconds)
 
 def response(message):
     if message.get('message'):
@@ -55,7 +52,6 @@ def receive_message():
         for event in output['entry']:
             messaging = event['messaging']
             for message in messaging:
-                print(message)
                 try:
                     t=threading.Thread(target=response, args=(message, ))
                     t.daemon=True
@@ -83,6 +79,12 @@ def send_message(recipient_id, products):
     return "success"
 
 if __name__ == '__main__':
-    products = get_current()
+    
+    try:
+        monitor=threading.Thread(target=get_current)
+        monitor.daemon=True
+        monitor.start()
+    except:
+        print("Error: unable to start thread")
     app.run()
 
