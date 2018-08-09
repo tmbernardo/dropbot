@@ -3,6 +3,7 @@ from pymessenger.bot import Bot
 from lxml import html
 import requests
 import time
+import threading
 
 seconds = 1
 products = []
@@ -22,14 +23,23 @@ def get_current():
 
     # create a list of products:
     cur_products = tree.xpath('//div[@class="name"]/text()')
-    products = cur_products
+    return cur_products
     # if(products != cur_products):
     #     products = cur_products
     #     # send notification to messenger
 
     # # time.sleep(seconds)
     # print(products)
-products = get_current()
+
+def response(message):
+    if message.get('message'):
+        #Facebook Messenger ID for user so we know where to send response back to
+        recipient_id = message['sender']['id']
+        if message['message'].get('text'):
+            send_message(recipient_id, products)
+        #if user sends us a GIF, photo,video, or any other non-text item
+        if message['message'].get('attachments'):
+            send_message(recipient_id, products)
 
 @app.route('/', methods=['GET', 'POST'])
 def receive_message():
@@ -45,14 +55,13 @@ def receive_message():
         for event in output['entry']:
             messaging = event['messaging']
             for message in messaging:
-                if message.get('message'):
-                    #Facebook Messenger ID for user so we know where to send response back to
-                    recipient_id = message['sender']['id']
-                    if message['message'].get('text'):
-                        send_message(recipient_id, products)
-                    #if user sends us a GIF, photo,video, or any other non-text item
-                    if message['message'].get('attachments'):
-                        send_message(recipient_id, product)
+                print(message)
+                try:
+                    t=threading.Thread(target=response, args=(message))
+                    t.daemon=True
+                    t.start()
+                except:
+                    print("Error: unable to start thread")
         return "Message Processed"
 
 def get_products():
@@ -74,5 +83,6 @@ def send_message(recipient_id, products):
     return "success"
 
 if __name__ == '__main__':
+    products = get_current()
     app.run()
 
