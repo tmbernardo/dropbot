@@ -19,82 +19,71 @@ def config(filename='db.ini', section='dropbot'):
  
     return db
 
-def insert(table, column ,value):
-    """ insert a new vendor into the vendors table """
-    sql = """INSERT INTO {}({})
-             VALUES(%s);""".format(table, column)
+def execute_cmd(command, rowcount=False):
+    """ executes sql command """
+    rv = None
     conn = None
     try:
-        # read database configuration
+        # read the connection parameters
         params = config()
-        # connect to the PostgreSQL database
+        # connect to the PostgreSQL server
         conn = psycopg2.connect(**params)
-        # create a new cursor
         cur = conn.cursor()
-        # execute the INSERT statement
-        cur.execute(sql, (value,))
-        # commit the changes to the database
+        # create table one by one
+        cur.execute(command)
+
+        rv = True if rowcount else False
+        # commit the changes
         conn.commit()
-        # close communication with the database
+        # close communication with the PostgreSQL database server
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
         if conn is not None:
             conn.close()
+
+def create_tables():
+    """ create tables in the PostgreSQL database"""
+    cmds = (
+        """
+        CREATE TABLE users (
+            user_id SERIAL PRIMARY KEY,
+            fb_id VARCHAR(255) NOT NULL
+        )
+        """,
+        """ CREATE TABLE products (
+                prod_id SERIAL PRIMARY KEY,
+                prod_name VARCHAR(255) NOT NULL
+                )
+        """)
+
+    for cmd in cmds:
+        execute_cmd(cmd)
+
+def insert(table, column ,value):
+    """ insert a new vendor into the vendors table """
+    cmd = """INSERT INTO {}({})
+             VALUES('{}');""".format(table, column, value)
+    execute_cmd(cmd)
 
 def insert_list(table, column, valuelist):
     """ insert multiple vendors into the vendors table  """
-    sql = "INSERT INTO {}({}) VALUES(%s)".format(table, column)
-    conn = None
-    try:
-        # read database configuration
-        params = config()
-        # connect to the PostgreSQL database
-        conn = psycopg2.connect(**params)
-        # create a new cursor
-        cur = conn.cursor()
-        # execute the INSERT statement
-        cur.executemany(sql, valuelist)
-        # commit the changes to the database
-        conn.commit()
-        # close communication with the database
-        cur.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
+    
+    cmd = "INSERT INTO {}({}) VALUES(%s)".format(table, column)
+    execute_cmd(cmd)
 
 def update_vendor(vendor_id, vendor_name):
     """ update vendor name based on the vendor id """
-    sql = """ UPDATE vendors
+    cmd = """ UPDATE vendors
                 SET vendor_name = %s
-                WHERE vendor_id = %s"""
-    conn = None
-    updated_rows = 0
-    try:
-        # read database configuration
-        params = config()
-        # connect to the PostgreSQL database
-        conn = psycopg2.connect(**params)
-        # create a new cursor
-        cur = conn.cursor()
-        # execute the UPDATE  statement
-        cur.execute(sql, (vendor_name, vendor_id, ))
-        # get the number of updated rows
-        updated_rows = cur.rowcount
-        # Commit the changes to the database
-        conn.commit()
-        # Close communication with the PostgreSQL database
-        cur.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
- 
-    return updated_rows
+                WHERE vendor_id = %s""" 
+    return execute_cmd(cmd, True)
+
+def delete_row(table, column, ID):
+    """ delete part by part id """
+    cmd = "DELETE FROM {} WHERE {} = {}".format(table, column, ID)
+    return execute_cmd(cmd, True)
 
 def get_table(table):
     """ query data from the vendors table """
@@ -116,30 +105,3 @@ def get_table(table):
     finally:
         if conn is not None:
             conn.close()
-
-def delete_part(table, ID):
-    """ delete part by part id """
-    conn = None
-    rows_deleted = 0
-    try:
-        # read database configuration
-        params = config()
-        # connect to the PostgreSQL database
-        conn = psycopg2.connect(**params)
-        # create a new cursor
-        cur = conn.cursor()
-        # execute the UPDATE  statement
-        cur.execute("DELETE FROM %s WHERE vendor_id = %s", (table, ID,))
-        # get the number of updated rows
-        rows_deleted = cur.rowcount
-        # Commit the changes to the database
-        conn.commit()
-        # Close communication with the PostgreSQL database
-        cur.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
- 
-    return rows_deleted

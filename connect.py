@@ -38,4 +38,5 @@ def create_tables():
         if conn is not None:
             conn.close()
  
+db.insert("users","fb_id","lkj34khjl2")
 db.get_table("users")
