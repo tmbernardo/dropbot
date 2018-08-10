@@ -19,7 +19,7 @@ def config(filename='db.ini', section='dropbot'):
  
     return db
 
-def execute_cmd(command, rowcount=False):
+def execute_cmd(command, rowcount=False, execmany=False, valuelist=False):
     """ executes sql command """
     rv = None
     conn = None
@@ -29,9 +29,13 @@ def execute_cmd(command, rowcount=False):
         # connect to the PostgreSQL server
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-        # create table one by one
-        cur.execute(command)
-
+        if not execmany:
+            # execute one command
+            cur.execute(command)
+        else:
+            # execute many
+            cur.executemany(command, valuelist)
+        # returns rowcount if rowcount is true
         rv = True if rowcount else False
         # commit the changes
         conn.commit()
@@ -67,11 +71,11 @@ def insert(table, column ,value):
              VALUES('{}');""".format(table, column, value)
     execute_cmd(cmd)
 
-def insert_list(table, column, valuelist):
+def insert_list(table, column, vlist):
     """ insert multiple vendors into the vendors table  """
     
     cmd = "INSERT INTO {}({}) VALUES(%s)".format(table, column)
-    execute_cmd(cmd)
+    execute_cmd(cmd, execmany=True, valuelist=vlist)
 
 def update_vendor(vendor_id, vendor_name):
     """ update vendor name based on the vendor id """
