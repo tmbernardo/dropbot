@@ -5,7 +5,7 @@ import requests
 import time
 import threading
 
-seconds = 1
+seconds = 10
 products = []
 
 app = Flask(__name__)
