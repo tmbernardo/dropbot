@@ -38,4 +38,4 @@ def create_tables():
         if conn is not None:
             conn.close()
  
-db.insert()
+db.get_table("users")

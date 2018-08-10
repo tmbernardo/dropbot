@@ -21,8 +21,8 @@ def config(filename='db.ini', section='dropbot'):
 
 def insert(table, column ,value):
     """ insert a new vendor into the vendors table """
-    sql = """INSERT INTO %s(%s)
-             VALUES(%s);"""
+    sql = """INSERT INTO {}({})
+             VALUES(%s);""".format(table, column)
     conn = None
     try:
         # read database configuration
@@ -32,7 +32,7 @@ def insert(table, column ,value):
         # create a new cursor
         cur = conn.cursor()
         # execute the INSERT statement
-        cur.execute(sql, (table, column, value,))
+        cur.execute(sql, (value,))
         # commit the changes to the database
         conn.commit()
         # close communication with the database
@@ -45,7 +45,7 @@ def insert(table, column ,value):
 
 def insert_list(table, column, valuelist):
     """ insert multiple vendors into the vendors table  """
-    sql = "INSERT INTO %s(%s) VALUES(%s)"
+    sql = "INSERT INTO {}({}) VALUES(%s)".format(table, column)
     conn = None
     try:
         # read database configuration
@@ -55,7 +55,7 @@ def insert_list(table, column, valuelist):
         # create a new cursor
         cur = conn.cursor()
         # execute the INSERT statement
-        cur.executemany(sql,(table, column,valuelist,))
+        cur.executemany(sql, valuelist)
         # commit the changes to the database
         conn.commit()
         # close communication with the database
@@ -103,7 +103,7 @@ def get_table(table):
         params = config()
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-        cur.execute("SELECT * FROM %s", (table,))
+        cur.execute("SELECT * FROM {}".format(table))
         row = cur.fetchone()
  
         while row is not None:
