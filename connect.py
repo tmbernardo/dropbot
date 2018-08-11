@@ -3,7 +3,7 @@
 import psycopg2
 import dbhandler as db
  
- 
+
 def create_tables():
     """ create tables in the PostgreSQL database"""
     commands = (

@@ -66,31 +66,31 @@ def create_tables():
         execute_cmd(cmd)
 
 def insert(table, column ,value):
-    """ insert a new vendor into the vendors table """
+    """ insert a new value into a table """
     cmd = """INSERT INTO {}({})
              VALUES('{}');""".format(table, column, value)
     execute_cmd(cmd)
 
 def insert_list(table, column, vlist):
-    """ insert multiple vendors into the vendors table  """
+    """ insert multiple entries into a table  """
     
     cmd = "INSERT INTO {}({}) VALUES(%s)".format(table, column)
     execute_cmd(cmd, execmany=True, valuelist=vlist)
 
 def update_vendor(vendor_id, vendor_name):
-    """ update vendor name based on the vendor id """
+    """ update name based on the id """
     cmd = """ UPDATE vendors
                 SET vendor_name = %s
                 WHERE vendor_id = %s""" 
     return execute_cmd(cmd, True)
 
 def delete_row(table, column, ID):
-    """ delete part by part id """
+    """ delete entry by id """
     cmd = "DELETE FROM {} WHERE {} = {}".format(table, column, ID)
     return execute_cmd(cmd, True)
 
 def get_table(table):
-    """ query data from the vendors table """
+    """ query data from a table """
     conn = None
     try:
         params = config()
