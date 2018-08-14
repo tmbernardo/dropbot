@@ -53,29 +53,41 @@ def create_tables():
         """
         CREATE TABLE users (
             user_id SERIAL PRIMARY KEY,
-            fb_id VARCHAR(255) NOT NULL
+            fb_id VARCHAR(255) NOT NULL UNIQUE
         )
         """,
-        """ CREATE TABLE products (
-                prod_id SERIAL PRIMARY KEY,
-                prod_name VARCHAR(255) NOT NULL
-                )
-        """)
+        """
+        CREATE TABLE products (
+            prod_id SERIAL PRIMARY KEY,
+            prod_name VARCHAR(255) NOT NULL UNIQUE
+        )
+        """,
+        """ 
+        CREATE TABLE dictionary (
+            prod_id VARCHAR(255) NOT NULL
+            user_id VARCHAR(255) NOT NULL
+        )
+        """
+        )
 
     for cmd in cmds:
         execute_cmd(cmd)
 
 def insert(table, column ,value):
     """ insert a new value into a table """
-    cmd = """INSERT INTO {}({})
-             VALUES('{}');""".format(table, column, value)
+    cmd = """INSERT INTO {}({}) VALUES('{}') ON CONFLICT ({}) DO NOTHING;""".format(table, column, value, column)
     execute_cmd(cmd)
 
 def insert_list(table, column, vlist):
     """ insert multiple entries into a table  """
+    lst = []
+    for i in range(len(vlist)):
+        e = (vlist[i], )
+        lst.append(e)
     
-    cmd = "INSERT INTO {}({}) VALUES(%s)".format(table, column)
-    execute_cmd(cmd, execmany=True, valuelist=vlist)
+    # cmd = "INSERT INTO {}({}) VALUES(%s) SELECT DISTINCT {} FROM {} a WHERE NOT EXISTS (SELECT * FROM {} b WHERE a.{} = b.{})".format(table, column, column, table, table, column, column)
+    cmd = "INSERT INTO {} ({}) VALUES (%s) ON CONFLICT ({}) DO NOTHING".format(table, column, column)
+    execute_cmd(cmd, execmany=True, valuelist=lst)
 
 def update_vendor(vendor_id, vendor_name):
     """ update name based on the id """
@@ -89,18 +101,19 @@ def delete_row(table, column, ID):
     cmd = "DELETE FROM {} WHERE {} = {}".format(table, column, ID)
     return execute_cmd(cmd, True)
 
-def get_table(table):
+def get_table(ID, table):
     """ query data from a table """
     conn = None
+    l = []
     try:
         params = config()
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-        cur.execute("SELECT * FROM {}".format(table))
+        cur.execute("SELECT {} FROM {}".format(ID, table))
         row = cur.fetchone()
  
         while row is not None:
-            print(row)
+            l.append(row[0])
             row = cur.fetchone()
  
         cur.close()
@@ -109,3 +122,4 @@ def get_table(table):
     finally:
         if conn is not None:
             conn.close()
+        return l

@@ -1,2 +1,4 @@
 *.txt
 db.ini
+database
+*.pyc

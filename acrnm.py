@@ -4,9 +4,9 @@ from lxml import html
 import requests
 import time
 import threading
+import dbhandler
 
-seconds = 10
-products = []
+seconds = 9
 
 app = Flask(__name__)
 with open('access-token.txt', 'r') as access_file:
@@ -18,15 +18,15 @@ VERIFY_TOKEN = verify
 bot = Bot(ACCESS_TOKEN)
 
 def get_current():
-    global products
     while(True):
         page = requests.get('http://acrnm.com')
         tree = html.fromstring(page.content)
 
         # create a list of products:
         cur_products = tree.xpath('//div[@class="name"]/text()')
-        if(products != cur_products):
-            products = cur_products
+        # if(products != cur_products):
+            # products = cur_products
+        dbhandler.insert_list("products", "prod_name", cur_products)
         time.sleep(seconds)
 
 def response(message):
@@ -34,10 +34,12 @@ def response(message):
         #Facebook Messenger ID for user so we know where to send response back to
         recipient_id = message['sender']['id']
         if message['message'].get('text'):
-            send_message(recipient_id, products)
+            if(message['message']['text'].lower() == "yes" or message['message']['text'].lower == "no"):
+                dbhandler.insert("users", "fb_id", recipient_id)
+            send_message(recipient_id, get_products())
         #if user sends us a GIF, photo,video, or any other non-text item
         if message['message'].get('attachments'):
-            send_message(recipient_id, products)
+            send_message(recipient_id, get_products())
 
 @app.route('/', methods=['GET', 'POST'])
 def receive_message():
@@ -62,7 +64,7 @@ def receive_message():
         return "Message Processed"
 
 def get_products():
-    return products
+    return dbhandler.get_table("prod_name", "products")
 
 def verify_fb_token(token_sent):
     # take token sent by facebook and verify it matches the verify token you sent

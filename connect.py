@@ -10,14 +10,22 @@ def create_tables():
         """
         CREATE TABLE users (
             user_id SERIAL PRIMARY KEY,
-            fb_id VARCHAR(255) NOT NULL
+            fb_id VARCHAR(255) NOT NULL UNIQUE
         )
         """,
-        """ CREATE TABLE products (
-                prod_id SERIAL PRIMARY KEY,
-                prod_name VARCHAR(255) NOT NULL
-                )
-        """)
+        """
+        CREATE TABLE products (
+            prod_id SERIAL PRIMARY KEY,
+            prod_name VARCHAR(255) NOT NULL UNIQUE
+        )
+        """,
+        """ 
+        CREATE TABLE dictionary (
+            prod_id VARCHAR(255) NOT NULL,
+            user_id VARCHAR(255) NOT NULL
+        )
+        """
+        )
     conn = None
     try:
         # read the connection parameters
@@ -37,6 +45,28 @@ def create_tables():
     finally:
         if conn is not None:
             conn.close()
- 
-db.insert("users","fb_id","lkj34khjl2")
-db.get_table("users")
+
+def drop_table(table):
+    cmd = "DROP TABLE {}".format(table)
+    db.execute_cmd(cmd)
+
+def create_table():
+    cmd = "CREATE TABLE users (user_id SERIAL PRIMARY KEY, fb_id VARCHAR(255) NOT NULL)"
+    db.execute_cmd(cmd)
+
+# create_tables()
+# create_table()
+# drop_table("users")
+# drop_table("products")
+# drop_table("dictionary")
+lst = ["fdjsaklfdsa", "rewroew", "rieqopreqw", "fdjsaklfdsa"]
+db.insert_list("users","fb_id", lst)
+
+u = db.get_table("fb_id", "users")
+print(u)
+
+db.insert("users", "fb_id", "fdjsaklfdsa")
+
+u = db.get_table("fb_id", "users")
+print(u)
+
