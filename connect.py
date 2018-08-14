@@ -2,7 +2,6 @@
  
 import psycopg2
 import dbhandler as db
- 
 
 def create_tables():
     """ create tables in the PostgreSQL database"""
@@ -69,4 +68,3 @@ db.insert("users", "fb_id", "fdjsaklfdsa")
 
 u = db.get_table("fb_id", "users")
 print(u)
-

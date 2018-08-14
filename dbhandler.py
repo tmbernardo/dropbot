@@ -64,7 +64,7 @@ def create_tables():
         """,
         """ 
         CREATE TABLE dictionary (
-            prod_id VARCHAR(255) NOT NULL
+            prod_id VARCHAR(255) NOT NULL,
             user_id VARCHAR(255) NOT NULL
         )
         """
@@ -123,3 +123,6 @@ def get_table(ID, table):
         if conn is not None:
             conn.close()
         return l
+
+# if __name__ == "__main__":
+    # create_tables()
