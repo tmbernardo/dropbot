@@ -1,5 +1,5 @@
 *.txt
 db.ini
 database
-database/*
+database/
 *.pyc
