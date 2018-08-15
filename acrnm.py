@@ -10,14 +10,14 @@ import threading
 seconds = 30
 
 app = Flask(__name__)
-with open('access-token.txt', 'r') as access_file:
-    access = access_file.read().replace('\n', '')
-with open('verify-token.txt', 'r') as verify_file:
-    verify = verify_file.read().replace('\n', '')
-#ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
-#VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
-ACCESS_TOKEN=access
-VERIFY_TOKEN=verify
+#with open('access-token.txt', 'r') as access_file:
+#    access = access_file.read().replace('\n', '')
+#with open('verify-token.txt', 'r') as verify_file:
+#    verify = verify_file.read().replace('\n', '')
+ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
+VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
+#ACCESS_TOKEN=access
+#VERIFY_TOKEN=verify
 bot = Page(ACCESS_TOKEN)
 products = []
 
