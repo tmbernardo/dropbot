@@ -1,1 +1,1 @@
-web: gunicorn acrnm:app -b :5000 --log-file=-
+web: gunicorn acrnm:app --log-file=-
