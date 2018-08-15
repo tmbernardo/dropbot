@@ -1,5 +1,5 @@
 from flask import Flask, request
-from pymessenger.bot import Bot
+from fbmq import Page
 from lxml import html
 import os
 import requests
@@ -10,15 +10,15 @@ import threading
 seconds = 30
 
 app = Flask(__name__)
-#with open('access-token.txt', 'r') as access_file:
-#    access = access_file.read().replace('\n', '')
-#with open('verify-token.txt', 'r') as verify_file:
-#    verify = verify_file.read().replace('\n', '')
-ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
-VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
-#ACCESS_TOKEN=access
-#VERIFY_TOKEN=verify
-bot = Bot(ACCESS_TOKEN)
+with open('access-token.txt', 'r') as access_file:
+    access = access_file.read().replace('\n', '')
+with open('verify-token.txt', 'r') as verify_file:
+    verify = verify_file.read().replace('\n', '')
+#ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
+#VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
+ACCESS_TOKEN=access
+VERIFY_TOKEN=verify
+bot = Page(ACCESS_TOKEN)
 products = []
 
 def getprods():
@@ -28,7 +28,6 @@ def getprods():
 
     # create a list of products:
     cur_products = tree.xpath('//div[@class="name"]/text()')
-    print(cur_products)
     if(products != cur_products):
         products = cur_products
 
@@ -49,6 +48,7 @@ def response(message):
     if message.get('message'):
         #Facebook Messenger ID for user so we know where to send response back to
         recipient_id = message['sender']['id']
+        print(message['message'].get('text'))
         if message['message'].get('text'):
             if(message['message']['text'].lower() == "yes" or message['message']['text'].lower == "no"):
 #                dbhandler.insert("users", "fb_id", recipient_id)
@@ -85,6 +85,12 @@ def get_products():
     return products
 #    return dbhandler.get_table("prod_name", "products")
 
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    page.handle_webhook(request.get_data(as_text=True))
+    return "finished"
+
+@app.route('/webhook', methods=['GET'])
 def verify_fb_token(token_sent):
     # take token sent by facebook and verify it matches the verify token you sent
     # if they match, allow the request, else return an error 
@@ -97,7 +103,7 @@ def send_message(recipient_id, products):
     response = ""
     for product in products:
         response += product + '\n'
-    bot.send_text_message(recipient_id, response)
+    bot.send(recipient_id, response)
     return "success"
 
 if __name__ == '__main__':

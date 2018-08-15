@@ -1,4 +1,4 @@
 Flask==0.12.2
-pymessenger==0.0.7.0
+fbmq==2.5.0
 gunicorn==19.6.0
 lxml==3.6.0
