@@ -41,7 +41,7 @@ def get_current():
         cur_products = tree.xpath('//div[@class="name"]/text()')
         if(products != cur_products):
             products = cur_products
-        print(page)
+        print(cur_products)
 #        dbhandler.insert_list("products", "prod_name", cur_products)
         time.sleep(seconds)
 
