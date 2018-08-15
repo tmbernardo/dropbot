@@ -1,1 +1,1 @@
-web: gunicorn app:acrnm --log-file=-
+web: gunicorn acrnm:app --log-file=-
