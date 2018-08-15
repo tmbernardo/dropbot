@@ -28,6 +28,7 @@ def getprods():
 
     # create a list of products:
     cur_products = tree.xpath('//div[@class="name"]/text()')
+    print(cur_products)
     if(products != cur_products):
         products = cur_products
 
