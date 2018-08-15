@@ -16,8 +16,20 @@ app = Flask(__name__)
 #    verify = verify_file.read().replace('\n', '')
 ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
 VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
+#ACCESS_TOKEN=access
+#VERIFY_TOKEN=verify
 bot = Bot(ACCESS_TOKEN)
 products = []
+
+def getprods():
+    global products
+    page = requests.get('http://acrnm.com')
+    tree = html.fromstring(page.content)
+
+    # create a list of products:
+    cur_products = tree.xpath('//div[@class="name"]/text()')
+    if(products != cur_products):
+        products = cur_products
 
 def get_current():
     global products
@@ -58,12 +70,13 @@ def receive_message():
         for event in output['entry']:
             messaging = event['messaging']
             for message in messaging:
-                try:
-                    t=threading.Thread(target=response, args=(message, ))
-                    t.daemon=True
-                    t.start()
-                except:
-                    print("Error: unable to start thread")
+                response(message)
+#                try:
+#                    t=threading.Thread(target=response, args=(message, ))
+#                    t.daemon=True
+#                    t.start()
+#                except:
+#                    print("Error: unable to start thread")
         return "Message Processed"
 
 def get_products():
@@ -87,10 +100,11 @@ def send_message(recipient_id, products):
     return "success"
 
 if __name__ == '__main__':
-    try:
-        monitor=threading.Thread(target=get_current)
-        monitor.daemon=True
-        monitor.start()
-    except:
-        print("Error: unable to start thread")
+    getprods()
+#    try:
+#        monitor=threading.Thread(target=get_current)
+#        monitor.daemon=True
+#        monitor.start()
+#    except:
+#        print("Error: unable to start thread")
     app.run()
