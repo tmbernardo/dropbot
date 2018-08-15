@@ -1,32 +1,35 @@
 from flask import Flask, request
 from pymessenger.bot import Bot
 from lxml import html
+import os
 import requests
 import time
 import threading
-import dbhandler
+# import dbhandler
 
-seconds = 9
+seconds = 30
 
 app = Flask(__name__)
-with open('access-token.txt', 'r') as access_file:
-    access = access_file.read().replace('\n', '')
-with open('verify-token.txt', 'r') as verify_file:
-    verify = verify_file.read().replace('\n', '')
-ACCESS_TOKEN = access
-VERIFY_TOKEN = verify
+#with open('access-token.txt', 'r') as access_file:
+#    access = access_file.read().replace('\n', '')
+#with open('verify-token.txt', 'r') as verify_file:
+#    verify = verify_file.read().replace('\n', '')
+ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
+VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
 bot = Bot(ACCESS_TOKEN)
+products = []
 
 def get_current():
+    global products
     while(True):
         page = requests.get('http://acrnm.com')
         tree = html.fromstring(page.content)
 
         # create a list of products:
         cur_products = tree.xpath('//div[@class="name"]/text()')
-        # if(products != cur_products):
-            # products = cur_products
-        dbhandler.insert_list("products", "prod_name", cur_products)
+        if(products != cur_products):
+            products = cur_products
+#        dbhandler.insert_list("products", "prod_name", cur_products)
         time.sleep(seconds)
 
 def response(message):
@@ -35,8 +38,8 @@ def response(message):
         recipient_id = message['sender']['id']
         if message['message'].get('text'):
             if(message['message']['text'].lower() == "yes" or message['message']['text'].lower == "no"):
-                dbhandler.insert("users", "fb_id", recipient_id)
-            send_message(recipient_id, get_products())
+#                dbhandler.insert("users", "fb_id", recipient_id)
+                send_message(recipient_id, get_products())
         #if user sends us a GIF, photo,video, or any other non-text item
         if message['message'].get('attachments'):
             send_message(recipient_id, get_products())
@@ -64,7 +67,9 @@ def receive_message():
         return "Message Processed"
 
 def get_products():
-    return dbhandler.get_table("prod_name", "products")
+    global products
+    return products
+#    return dbhandler.get_table("prod_name", "products")
 
 def verify_fb_token(token_sent):
     # take token sent by facebook and verify it matches the verify token you sent

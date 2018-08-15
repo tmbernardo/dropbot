@@ -1,4 +1,5 @@
-*.txt
+verify-token.txt
+access-token.txt
 db.ini
 database
 database/
