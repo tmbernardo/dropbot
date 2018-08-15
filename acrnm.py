@@ -102,7 +102,7 @@ def send_message(recipient_id, products):
     response = ""
     for product in products:
         response += product + '\n'
-    bot.send(recipient_id, response, metadata="DEVELOPER_DEFINED_METADATA")
+    bot.send(recipient_id, "response", metadata="DEVELOPER_DEFINED_METADATA")
     return "success"
 
 if __name__ == '__main__':
