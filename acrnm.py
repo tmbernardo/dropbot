@@ -102,7 +102,7 @@ def send_message(recipient_id, products):
     response = ""
     for product in products:
         response += product + '\n'
-    print(response)
+    get_current()
     bot.send(recipient_id, "response", metadata="DEVELOPER_DEFINED_METADATA")
     return "success"
 
