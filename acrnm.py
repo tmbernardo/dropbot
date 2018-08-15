@@ -71,13 +71,12 @@ def receive_message():
         for event in output['entry']:
             messaging = event['messaging']
             for message in messaging:
-                response(message)
-#                try:
-#                    t=threading.Thread(target=response, args=(message, ))
-#                    t.daemon=True
-#                    t.start()
-#                except:
-#                    print("Error: unable to start thread")
+               try:
+                   t=threading.Thread(target=response, args=(message, ))
+                   t.daemon=True
+                   t.start()
+               except:
+                   print("Error: unable to start thread")
         return "Message Processed"
 
 def get_products():
@@ -107,11 +106,10 @@ def send_message(recipient_id, products):
     return "success"
 
 if __name__ == '__main__':
-    getprods()
-#    try:
-#        monitor=threading.Thread(target=get_current)
-#        monitor.daemon=True
-#        monitor.start()
-#    except:
-#        print("Error: unable to start thread")
+   try:
+       monitor=threading.Thread(target=get_current)
+       monitor.daemon=True
+       monitor.start()
+   except:
+       print("Error: unable to start thread")
     app.run()
