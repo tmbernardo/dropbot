@@ -90,7 +90,6 @@ def webhook():
     page.handle_webhook(request.get_data(as_text=True))
     return "finished"
 
-@app.route('/webhook', methods=['GET'])
 def verify_fb_token(token_sent):
     # take token sent by facebook and verify it matches the verify token you sent
     # if they match, allow the request, else return an error 
@@ -103,7 +102,7 @@ def send_message(recipient_id, products):
     response = ""
     for product in products:
         response += product + '\n'
-    bot.send(recipient_id, response, attachment=None, metadata="DEVELOPER_DEFINED_METADATA")
+    bot.send(recipient_id, response, metadata="DEVELOPER_DEFINED_METADATA")
     return "success"
 
 if __name__ == '__main__':
