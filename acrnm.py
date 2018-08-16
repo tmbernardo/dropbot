@@ -50,7 +50,6 @@ def response(message):
     if message.get('message'):
         #Facebook Messenger ID for user so we know where to send response back to
         recipient_id = message['sender']['id']
-        print(message['message'].get('text'))
         if message['message'].get('text'):
             if(message['message']['text'].lower() == "yes" or message['message']['text'].lower == "no"):
 #                dbhandler.insert("users", "fb_id", recipient_id)
@@ -98,11 +97,11 @@ def verify_fb_token(token_sent):
     return 'Invalid verification token'
 
 def send_message(recipient_id, products):
-    #sends user the text message provided via input response parameter
+    # sends user the text message provided via input response parameter
     response = ""
     for product in products:
         response += product + '\n'
-    # get_current()
+    print(products)
     bot.send(recipient_id, response, metadata="DEVELOPER_DEFINED_METADATA")
     return "success"
 
