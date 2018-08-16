@@ -1,37 +1,16 @@
 #!/usr/bin/python
-from configparser import ConfigParser
 import psycopg2
 import os
 
 DATABASE_URL = os.environ['DATABASE_URL']
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
- 
-def config(filename='db.ini', section='dropbot'):
-    # create a parser
-    parser = ConfigParser()
-    # read config file
-    parser.read(filename)
- 
-    # get section, default to postgresql
-    db = {}
-    if parser.has_section(section):
-        params = parser.items(section)
-        for param in params:
-            db[param[0]] = param[1]
-    else:
-        raise Exception('Section {0} not found in the {1} file'.format(section, filename))
- 
-    return db
 
 def execute_cmd(command, rowcount=False, execmany=False, valuelist=False):
     """ executes sql command """
     rv = None
     conn = None
     try:
-        # read the connection parameters
-        params = config()
         # connect to the PostgreSQL server
-        conn = psycopg2.connect(**params)
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
         if not execmany:
             # execute one command
@@ -110,8 +89,7 @@ def get_table(ID, table):
     conn = None
     l = []
     try:
-        params = config()
-        conn = psycopg2.connect(**params)
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
         cur.execute("SELECT {} FROM {}".format(ID, table))
         row = cur.fetchone()
