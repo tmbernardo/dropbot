@@ -103,12 +103,12 @@ def send_message(recipient_id, products):
     return "success"
 
 if __name__ == '__main__':
-    products = getprods()
-    print(products)
-    # try:
-    #     monitor=threading.Thread(target=get_current)
-    #     monitor.daemon = True
-    #     monitor.start()
-    # except:
-    #     print("Error: unable to start thread")
+    # products = getprods()
+    # print(products)
+    try:
+        monitor=threading.Thread(target=get_current)
+        monitor.daemon = True
+        monitor.start()
+    except:
+        print("Error: unable to start thread")
     app.run()
