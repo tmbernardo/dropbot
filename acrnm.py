@@ -89,4 +89,5 @@ def send_message(recipient_id, products):
     bot.send(recipient_id, "\n".join(products))
     return "success"
 
-app.run()
+if __name__ == "__main__":
+    app.run()
