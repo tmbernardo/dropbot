@@ -22,14 +22,12 @@ bot = Page(ACCESS_TOKEN)
 products = []
 
 def getprods():
-    global products
     page = requests.get('http://acrnm.com')
     tree = html.fromstring(page.content)
 
     # create a list of products:
     cur_products = tree.xpath('//div[@class="name"]/text()')
-    if(products != cur_products):
-        return cur_products
+    return cur_products
 
 def get_current():
     global products
@@ -47,7 +45,7 @@ def get_current():
 def response(message):
     global products
     if message.get('message'):
-        #Facebook Messenger ID for user so we know where to send response back to
+        # Facebook Messenger ID for user so we know where to send response back to
         recipient_id = message['sender']['id']
         if message['message'].get('text'):
             if(message['message']['text'].lower() == "yes" or message['message']['text'].lower == "no"):
@@ -106,6 +104,7 @@ def send_message(recipient_id, products):
 
 if __name__ == '__main__':
     products = getprods()
+    print(products)
     try:
         monitor=threading.Thread(target=get_current)
         monitor.daemon = True
