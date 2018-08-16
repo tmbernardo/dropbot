@@ -46,6 +46,7 @@ def get_current():
         time.sleep(seconds)
 
 def response(message):
+    global products
     if message.get('message'):
         #Facebook Messenger ID for user so we know where to send response back to
         recipient_id = message['sender']['id']
@@ -102,7 +103,6 @@ def send_message(recipient_id, products):
     for product in products:
         response += product + '\n'
     # get_current()
-    print(product)
     bot.send(recipient_id, "response", metadata="DEVELOPER_DEFINED_METADATA")
     return "success"
 
