@@ -29,7 +29,7 @@ def getprods():
     # create a list of products:
     cur_products = tree.xpath('//div[@class="name"]/text()')
     if(products != cur_products):
-        products = cur_products
+        return cur_products
 
 def get_current():
     global products
@@ -99,9 +99,9 @@ def verify_fb_token(token_sent):
 def send_message(recipient_id, products):
     # sends user the text message provided via input response parameter
     response = ""
+    products = getprods()
     for product in products:
         response += product + '\n'
-    print(products)
     bot.send(recipient_id, response, metadata="DEVELOPER_DEFINED_METADATA")
     return "success"
 
