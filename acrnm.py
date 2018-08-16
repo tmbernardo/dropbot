@@ -73,7 +73,6 @@ def receive_message():
             for message in messaging:
                 try:
                     t=threading.Thread(target=response, args=(message, ))
-                    t.daemon=True
                     t.start()
                 except:
                     print("Error: unable to start thread")
@@ -108,7 +107,6 @@ def send_message(recipient_id, products):
 if __name__ == '__main__':
     try:
         monitor=threading.Thread(target=get_current)
-        monitor.daemon=True
         monitor.start()
     except:
         print("Error: unable to start thread")
