@@ -98,9 +98,10 @@ def verify_fb_token(token_sent):
 def send_message(recipient_id, products):
     # sends user the text message provided via input response parameter
     response = ""
-    products = getprods()
+    # products = getprods()
     for product in products:
         response += product + '\n'
+        
     bot.send(recipient_id, response, metadata="DEVELOPER_DEFINED_METADATA")
     return "success"
 
