@@ -22,6 +22,7 @@ bot = Page(ACCESS_TOKEN)
 products = []
 
 def get_current():
+    global products
     while(True):
         page = requests.get('http://acrnm.com')
         tree = html.fromstring(page.content)
