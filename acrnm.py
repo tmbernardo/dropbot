@@ -36,13 +36,13 @@ def get_current():
 
 def response(message):
     if message.get('message'):
-        #Facebook Messenger ID for user so we know where to send response back to
+        # Facebook Messenger ID for user so we know where to send response back to
         recipient_id = message['sender']['id']
         if message['message'].get('text'):
             if(message['message']['text'].lower() == "yes" or message['message']['text'].lower == "no"):
                 #dbhandler.insert("users", "fb_id", recipient_id)
                 send_message(recipient_id, get_products())
-        #if user sends us a GIF, photo,video, or any other non-text item
+        # if user sends us a GIF, photo,video, or any other non-text item
         if message['message'].get('attachments'):
             send_message(recipient_id, get_products())
 
@@ -70,7 +70,7 @@ def receive_message():
 def get_products():
     global products
     return products
-#    return dbhandler.get_table("prod_name", "products")
+#   return dbhandler.get_table("prod_name", "products")
 
 def verify_fb_token(token_sent):
     # take token sent by facebook and verify it matches the verify token you sent
@@ -80,7 +80,7 @@ def verify_fb_token(token_sent):
     return 'Invalid verification token'
 
 def send_message(recipient_id, products):
-    #sends user the text message provided via input response parameter
+    # sends user the text message provided via input response parameter
     bot.send(recipient_id, "\n".join(products))
     return "success"
 
