@@ -53,18 +53,4 @@ def create_table():
     cmd = "CREATE TABLE users (user_id SERIAL PRIMARY KEY, fb_id VARCHAR(255) NOT NULL)"
     db.execute_cmd(cmd)
 
-# create_tables()
-# create_table()
-# drop_table("users")
-# drop_table("products")
-# drop_table("dictionary")
-lst = ["fdjsaklfdsa", "rewroew", "rieqopreqw", "fdjsaklfdsa"]
-db.insert_list("users","fb_id", lst)
-
-u = db.get_table("fb_id", "users")
-print(u)
-
-db.insert("users", "fb_id", "fdjsaklfdsa")
-
-u = db.get_table("fb_id", "users")
-print(u)
+create_tables()
