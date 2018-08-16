@@ -41,8 +41,7 @@ def get_current():
         cur_products = tree.xpath('//div[@class="name"]/text()')
         if(products != cur_products):
             products = cur_products
-        # print(cur_products)
-#        dbhandler.insert_list("products", "prod_name", cur_products)
+#       dbhandler.insert_list("products", "prod_name", cur_products)
         time.sleep(seconds)
 
 def response(message):
@@ -52,7 +51,7 @@ def response(message):
         recipient_id = message['sender']['id']
         if message['message'].get('text'):
             if(message['message']['text'].lower() == "yes" or message['message']['text'].lower == "no"):
-#                dbhandler.insert("users", "fb_id", recipient_id)
+#               dbhandler.insert("users", "fb_id", recipient_id)
                 send_message(recipient_id, products)
         #if user sends us a GIF, photo,video, or any other non-text item
         if message['message'].get('attachments'):
@@ -71,19 +70,18 @@ def receive_message():
         for event in output['entry']:
             messaging = event['messaging']
             for message in messaging:
-                response(message)
-                # try:
-                #     t=threading.Thread(target=response, args=(message, ))
-                #     t.daemon = True
-                #     t.start()
-                # except:
-                #     print("Error: unable to start thread")
+                try:
+                    t=threading.Thread(target=response, args=(message, ))
+                    t.daemon = True
+                    t.start()
+                except:
+                    print("Error: unable to start thread")
         return "Message Processed"
 
 def get_products():
     global products
     return products
-#    return dbhandler.get_table("prod_name", "products")
+#   return dbhandler.get_table("prod_name", "products")
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
@@ -100,7 +98,6 @@ def verify_fb_token(token_sent):
 def send_message(recipient_id, products):
     # sends user the text message provided via input response parameter
     response = ""
-    # products = getprods()
     for product in products:
         response += product + '\n'
         
@@ -108,6 +105,7 @@ def send_message(recipient_id, products):
     return "success"
 
 if __name__ == '__main__':
+    products = getprods()
     try:
         monitor=threading.Thread(target=get_current)
         monitor.daemon = True
