@@ -68,12 +68,13 @@ def receive_message():
         for event in output['entry']:
             messaging = event['messaging']
             for message in messaging:
-                try:
-                    t=threading.Thread(target=response, args=(message, ))
-                    t.daemon = True
-                    t.start()
-                except:
-                    print("Error: unable to start thread")
+                response(message)
+                # try:
+                #     t=threading.Thread(target=response, args=(message, ))
+                #     t.daemon = True
+                #     t.start()
+                # except:
+                #     print("Error: unable to start thread")
         return "Message Processed"
 
 def get_products():
@@ -95,20 +96,21 @@ def verify_fb_token(token_sent):
 
 def send_message(recipient_id, products):
     # sends user the text message provided via input response parameter
+    products = getprods()
     response = ""
     for product in products:
         response += product + '\n'
-    print(products)
+
     bot.send(recipient_id, "response", metadata="DEVELOPER_DEFINED_METADATA")
     return "success"
 
 if __name__ == '__main__':
     # products = getprods()
     # print(products)
-    try:
-        monitor=threading.Thread(target=get_current)
-        monitor.daemon = True
-        monitor.start()
-    except:
-        print("Error: unable to start thread")
+    # try:
+    #     monitor=threading.Thread(target=get_current)
+    #     monitor.daemon = True
+    #     monitor.start()
+    # except:
+    #     print("Error: unable to start thread")
     app.run()
