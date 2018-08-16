@@ -34,19 +34,19 @@ def create_tables():
     """ create tables in the PostgreSQL database"""
     cmds = (
         """
-        CREATE TABLE users (
+        CREATE TABLE IF NOT EXISTS users (
             user_id SERIAL PRIMARY KEY,
             fb_id VARCHAR(255) NOT NULL UNIQUE
         )
         """,
         """
-        CREATE TABLE products (
+        CREATE TABLE IF NOT EXISTS products (
             prod_id SERIAL PRIMARY KEY,
             prod_name VARCHAR(255) NOT NULL UNIQUE
         )
         """,
         """ 
-        CREATE TABLE dictionary (
+        CREATE TABLE IF NOT EXISTS dictionary (
             prod_id VARCHAR(255) NOT NULL,
             user_id VARCHAR(255) NOT NULL
         )
