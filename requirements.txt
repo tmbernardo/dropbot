@@ -1,5 +1,5 @@
-Flask==0.12.2
+Flask==1.0.2
 fbmq==2.5.0
-gunicorn==19.6.0
-lxml==3.6.0
+gunicorn==19.9.0
+lxml==4.2.4
 gevent==1.3.5
