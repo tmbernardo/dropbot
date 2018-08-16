@@ -4,7 +4,7 @@ from lxml import html
 import requests
 import time
 import threading
-#import dbhandler
+import dbhandler
 import os
 
 seconds = 30
@@ -19,7 +19,6 @@ app = Flask(__name__)
 ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
 VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
 bot = Page(ACCESS_TOKEN)
-products = []
 
 def get_current():
     global products
@@ -30,8 +29,8 @@ def get_current():
         # create a list of products:
         cur_products = tree.xpath('//div[@class="name"]/text()')
         if(products != cur_products):
-            products = cur_products
-        #dbhandler.insert_list("products", "prod_name", cur_products)
+            #products = cur_products
+            dbhandler.insert_list("products", "prod_name", cur_products)
         time.sleep(seconds)
 
 def response(message):
@@ -40,7 +39,7 @@ def response(message):
         recipient_id = message['sender']['id']
         if message['message'].get('text'):
             if(message['message']['text'].lower() == "yes" or message['message']['text'].lower == "no"):
-                #dbhandler.insert("users", "fb_id", recipient_id)
+                dbhandler.insert("users", "fb_id", recipient_id)
                 send_message(recipient_id, get_products())
         #if user sends us a GIF, photo,video, or any other non-text item
         if message['message'].get('attachments'):
@@ -48,6 +47,13 @@ def response(message):
 
 @app.route('/', methods=['GET', 'POST'])
 def receive_message():
+    try:
+        monitor=threading.Thread(target=get_current)
+        monitor.daemon=True
+        monitor.start()
+    except:
+        print("Error: unable to start thread")
+    
     if request.method == 'GET':
         # before allowing people to message your bot, Facebook has implemented a verify token
         # that confirms all requests that your bot receives came from Facebook. 
@@ -68,9 +74,7 @@ def receive_message():
         return "Message Processed"
 
 def get_products():
-    global products
-    return products
-#    return dbhandler.get_table("prod_name", "products")
+    return dbhandler.get_table("prod_name", "products")
 
 def verify_fb_token(token_sent):
     # take token sent by facebook and verify it matches the verify token you sent
@@ -85,10 +89,4 @@ def send_message(recipient_id, products):
     return "success"
 
 if __name__ == '__main__':
-    try:
-        monitor=threading.Thread(target=get_current)
-        monitor.daemon=True
-        monitor.start()
-    except:
-        print("Error: unable to start thread")
     app.run()

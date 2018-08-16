@@ -1,6 +1,10 @@
 #!/usr/bin/python
 from configparser import ConfigParser
-import psycopg2 
+import psycopg2
+import os
+
+DATABASE_URL = os.environ['DATABASE_URL']
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
  
 def config(filename='db.ini', section='dropbot'):
     # create a parser
@@ -123,6 +127,3 @@ def get_table(ID, table):
         if conn is not None:
             conn.close()
         return l
-
-# if __name__ == "__main__":
-    # create_tables()
