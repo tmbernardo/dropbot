@@ -47,6 +47,7 @@ def response(message):
 
 @app.route('/', methods=['GET', 'POST'])
 def receive_message():
+    dbhandler.create_tables()
     try:
         monitor=threading.Thread(target=get_current)
         monitor.daemon=True
@@ -88,6 +89,4 @@ def send_message(recipient_id, products):
     bot.send(recipient_id, "\n".join(products))
     return "success"
 
-if __name__ == '__main__':
-    dbhandler.create_tables()
-    app.run()
+app.run()
