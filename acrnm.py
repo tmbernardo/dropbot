@@ -4,7 +4,7 @@ from lxml import html
 import requests
 import time
 import threading
-import dbhandler
+#import dbhandler
 import os
 
 seconds = 30
@@ -39,7 +39,7 @@ def response(message):
         recipient_id = message['sender']['id']
         if message['message'].get('text'):
             if(message['message']['text'].lower() == "yes" or message['message']['text'].lower == "no"):
-                dbhandler.insert("users", "fb_id", recipient_id)
+                #dbhandler.insert("users", "fb_id", recipient_id)
             send_message(recipient_id, get_products())
         #if user sends us a GIF, photo,video, or any other non-text item
         if message['message'].get('attachments'):
