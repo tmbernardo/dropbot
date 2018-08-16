@@ -82,10 +82,10 @@ def get_products():
     return products
 #   return dbhandler.get_table("prod_name", "products")
 
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    page.handle_webhook(request.get_data(as_text=True))
-    return "finished"
+# @app.route('/webhook', methods=['POST'])
+# def webhook():
+#     page.handle_webhook(request.get_data(as_text=True))
+#     return "finished"
 
 def verify_fb_token(token_sent):
     # take token sent by facebook and verify it matches the verify token you sent
@@ -96,7 +96,6 @@ def verify_fb_token(token_sent):
 
 def send_message(recipient_id, products):
     # sends user the text message provided via input response parameter
-    products = getprods()
     response = ""
     for product in products:
         response += product + '\n'
