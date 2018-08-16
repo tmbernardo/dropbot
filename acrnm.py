@@ -35,7 +35,7 @@ def get_current():
 
 def response(message):
     if message.get('message'):
-        #Facebook Messenger ID for user so we know where to send response back to
+        # Facebook Messenger ID for user so we know where to send response back to
         recipient_id = message['sender']['id']
         if message['message'].get('text'):
             if(message['message']['text'].lower() == "yes" or message['message']['text'].lower == "no"):
@@ -84,7 +84,7 @@ def verify_fb_token(token_sent):
     return 'Invalid verification token'
 
 def send_message(recipient_id, products):
-    #sends user the text message provided via input response parameter
+    # sends user the text message provided via input response parameter
     bot.send(recipient_id, "\n".join(products))
     return "success"
 
