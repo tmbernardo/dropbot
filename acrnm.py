@@ -10,14 +10,14 @@ import threading
 seconds = 10
 
 app = Flask(__name__)
-#with open('access-token.txt', 'r') as access_file:
-#    access = access_file.read().replace('\n', '')
-#with open('verify-token.txt', 'r') as verify_file:
-#    verify = verify_file.read().replace('\n', '')
-ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
-VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
-#ACCESS_TOKEN=access
-#VERIFY_TOKEN=verify
+with open('access-token.txt', 'r') as access_file:
+   access = access_file.read().replace('\n', '')
+with open('verify-token.txt', 'r') as verify_file:
+   verify = verify_file.read().replace('\n', '')
+# ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
+# VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
+ACCESS_TOKEN= access
+VERIFY_TOKEN= verify
 bot = Page(ACCESS_TOKEN)
 products = []
 
@@ -69,12 +69,12 @@ def receive_message():
             messaging = event['messaging']
             for message in messaging:
                 response(message)
-                # try:
-                #     t=threading.Thread(target=response, args=(message, ))
-                #     t.daemon = True
-                #     t.start()
-                # except:
-                #     print("Error: unable to start thread")
+                try:
+                    t=threading.Thread(target=response, args=(message, ))
+                    t.daemon = True
+                    t.start()
+                except:
+                    print("Error: unable to start thread")
         return "Message Processed"
 
 def get_products():
@@ -105,12 +105,10 @@ def send_message(recipient_id, products):
     return "success"
 
 if __name__ == '__main__':
-    # products = getprods()
-    # print(products)
-    # try:
-    #     monitor=threading.Thread(target=get_current)
-    #     monitor.daemon = True
-    #     monitor.start()
-    # except:
-    #     print("Error: unable to start thread")
+    try:
+        monitor=threading.Thread(target=get_current)
+        monitor.daemon = True
+        monitor.start()
+    except:
+        print("Error: unable to start thread")
     app.run()
