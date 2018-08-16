@@ -66,12 +66,7 @@ def receive_message():
         for event in output['entry']:
             messaging = event['messaging']
             for message in messaging:
-                try:
-                    t=threading.Thread(target=response, args=(message, ))
-                    t.daemon=True
-                    t.start()
-                except:
-                    print("Error: unable to start thread")
+                response(message)
         return "Message Processed"
 
 def get_products():
