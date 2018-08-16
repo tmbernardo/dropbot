@@ -1,1 +1,1 @@
-web: gunicorn acrnm:app -w 4 --log-file=-
+web: gunicorn acrnm:app -k gevent --worker-connections 1000 --log-file=-
