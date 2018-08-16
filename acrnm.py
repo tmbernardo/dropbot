@@ -7,7 +7,7 @@ import time
 import threading
 # import dbhandler
 
-seconds = 30
+seconds = 10
 
 app = Flask(__name__)
 #with open('access-token.txt', 'r') as access_file:
@@ -71,11 +71,13 @@ def receive_message():
         for event in output['entry']:
             messaging = event['messaging']
             for message in messaging:
-                try:
-                    t=threading.Thread(target=response, args=(message, ))
-                    t.start()
-                except:
-                    print("Error: unable to start thread")
+                response(message)
+                # try:
+                #     t=threading.Thread(target=response, args=(message, ))
+                #     t.daemon = True
+                #     t.start()
+                # except:
+                #     print("Error: unable to start thread")
         return "Message Processed"
 
 def get_products():
@@ -108,6 +110,7 @@ def send_message(recipient_id, products):
 if __name__ == '__main__':
     try:
         monitor=threading.Thread(target=get_current)
+        monitor.daemon = True
         monitor.start()
     except:
         print("Error: unable to start thread")
