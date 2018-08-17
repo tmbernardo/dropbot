@@ -1,5 +1,6 @@
 from fbmq import Page
 import dbhandler as db
+import os
 
 page = Page(os.environ("ACCESS_TOKEN"))
 
