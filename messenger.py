@@ -2,6 +2,19 @@ from fbpage import page
 import dbhandler as db
 import os
 
+@page.handle_optin
+def received_authentication(event):
+    sender_id = event.sender_id
+    recipient_id = event.recipient_id
+    time_of_auth = event.timestamp
+
+    pass_through_param = event.optin.get("ref")
+
+    print("Received authentication for user %s and page %s with pass "
+          "through param '%s' at %s" % (sender_id, recipient_id, pass_through_param, time_of_auth))
+
+    page.send(sender_id, "Authentication successful")
+
 @page.handle_message
 def message_handler(event): 
     print("receive_message")
