@@ -1,5 +1,7 @@
-from server import page
+from fbmq import Page
 import dbhandler as db
+
+page = Page(os.environ("ACCESS_TOKEN"))
 
 @page.handle_message
 def message_handler(event): 

@@ -5,9 +5,7 @@ import os
 
 app = Flask(__name__)
 
-ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
 VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
-page = Page(ACCESS_TOKEN)
 
 @app.route('/webhook', methods=['GET'])
 def validate():
