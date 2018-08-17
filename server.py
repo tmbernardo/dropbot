@@ -29,6 +29,6 @@ def apprun():
     app.run(threaded=True)
 
 if __name__ == "__main__":
-    q.enqueue(create_tables)
+    create_tables()
     q.enqueue(get_current)
     q.enqueue(apprun)
