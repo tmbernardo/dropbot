@@ -21,8 +21,7 @@ def received_postback(event):
     recipient_id = event.recipient_id
     time_of_postback = event.timestamp
 
-    print(event)
-    payload = event.postback_payload
+    payload = event.payload
 
     print("Received postback for user %s and page %s with payload '%s' at %s"
           % (sender_id, recipient_id, payload, time_of_postback))
