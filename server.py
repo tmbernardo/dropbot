@@ -1,5 +1,5 @@
 from flask import Flask, request
-from fbmq import Page
+from messenger import page
 import messenger
 import os
 
