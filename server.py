@@ -1,4 +1,6 @@
 from flask import Flask, request
+from monitor import get_current
+from dbhandler import create_tables
 from messenger import page
 import messenger
 import os
@@ -27,5 +29,6 @@ def apprun():
     app.run(threaded=True)
 
 if __name__ == "__main__":
+    q.enqueue(create_tables)
     q.enqueue(get_current)
     q.enqueue(apprun)
