@@ -22,13 +22,10 @@ def validate():
 def webhook():
   page.handle_webhook(request.get_data(as_text=True))
   return "ok"
-#@app.route('/webhook', methods=['POST'])
-#def webhook():
-#    payload = request.get_data(as_text=True)
-#    print(payload)
-#    page.handle_webhook(payload)
-#
-#    return "ok"
 
-if __name__ == '__main__':
+def apprun():
     app.run(threaded=True)
+
+if __name__ == "__main__":
+    q.enqueue(get_current)
+    q.enqueue(apprun)
