@@ -1,7 +1,7 @@
 from flask import Flask, request
 from monitor import get_current
 from dbhandler import create_tables
-from messenger import page
+from fbpage import page
 import messenger
 import os
 
@@ -25,10 +25,9 @@ def webhook():
   page.handle_webhook(request.get_data(as_text=True))
   return "ok"
 
-def apprun():
-    app.run(threaded=True)
+@app.route('/', methods=['GET', 'POST'])
+def initdb():
+    create_tables()
 
 if __name__ == "__main__":
-    create_tables()
-    q.enqueue(get_current)
-    q.enqueue(apprun)
+    app.run()
