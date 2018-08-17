@@ -68,7 +68,6 @@ def insert_list(table, column, vlist):
         e = (vlist[i], )
         lst.append(e)
     
-    # cmd = "INSERT INTO {}({}) VALUES(%s) SELECT DISTINCT {} FROM {} a WHERE NOT EXISTS (SELECT * FROM {} b WHERE a.{} = b.{})".format(table, column, column, table, table, column, column)
     cmd = "INSERT INTO {} ({}) VALUES (%s) ON CONFLICT ({}) DO NOTHING".format(table, column, column)
     execute_cmd(cmd, execmany=True, valuelist=lst)
 

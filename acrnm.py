@@ -73,4 +73,4 @@ def send_message(recipient_id, products):
     return "success"
 
 if __name__ == "__main__":
-    app.run()
+    app.run(threaded=True)
