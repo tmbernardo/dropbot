@@ -15,6 +15,19 @@ def received_authentication(event):
 
     page.send(sender_id, "Authentication successful")
 
+@page.handle_postback
+def received_postback(event):
+    sender_id = event.sender_id
+    recipient_id = event.recipient_id
+    time_of_postback = event.timestamp
+
+    payload = event.postback_payload
+
+    print("Received postback for user %s and page %s with payload '%s' at %s"
+          % (sender_id, recipient_id, payload, time_of_postback))
+
+    page.send(sender_id, "Postback called")
+
 @page.handle_message
 def message_handler(event): 
     print("receive_message")
