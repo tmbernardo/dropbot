@@ -1,6 +1,4 @@
 from flask import Flask, request
-from monitor import get_current
-from dbhandler import create_tables
 from fbpage import page
 import messenger
 import os
@@ -12,11 +10,11 @@ VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
 @app.route('/webhook', methods=['GET'])
 def validate():
     if request.args.get('hub.mode', '') == 'subscribe' and \
-                    request.args.get('hub.verify_token', '') == VERIFY_TOKEN:
+        request.args.get('hub.verify_token', '') == VERIFY_TOKEN:
 
         print("Validating webhook")
-
         return request.args.get('hub.challenge', '')
+
     else:
         return 'Failed validation. Make sure the validation tokens match.'
 
@@ -24,10 +22,6 @@ def validate():
 def webhook():
   page.handle_webhook(request.get_data(as_text=True))
   return "ok"
-
-@app.route('/', methods=['GET', 'POST'])
-def initdb():
-    create_tables()
 
 if __name__ == "__main__":
     app.run()
