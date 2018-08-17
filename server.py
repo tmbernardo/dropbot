@@ -19,13 +19,13 @@ def validate():
     else:
         return 'Failed validation. Make sure the validation tokens match.'
 
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    payload = request.get_data(as_text=True)
-    print(payload)
-    page.handle_webhook(payload)
-
-    return "ok"
+#@app.route('/webhook', methods=['POST'])
+#def webhook():
+#    payload = request.get_data(as_text=True)
+#    print(payload)
+#    page.handle_webhook(payload)
+#
+#    return "ok"
 
 if __name__ == '__main__':
     app.run(threaded=True)
