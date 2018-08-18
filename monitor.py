@@ -22,7 +22,7 @@ def get_current():
         cur_products = set(tree.xpath('//div[@class="name"]/text()'))
         old_prods = set(db.get_table("prod_name","products"))
         if cur_products & old_prods:
-            diff = list(cur_products.difference(old_products))
+            diff = list(cur_products.difference(old_prods))
             notify_all(diff)
             db.insert_list("products", "prod_name", diff)
         time.sleep(seconds)
