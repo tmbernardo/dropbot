@@ -6,7 +6,7 @@ from fbmq import QuickReply, Template
 page.greeting("Click Get Started below to subscribe!!")
 
 def show_persistent_menu(sender_id):
-    users = db.get_table("users", "fb_id")
+    users = db.get_table("fb_id", "users")
     if(sender_id not in users):
         page.show_persistent_menu([Template.ButtonPostBack('Subscribe', 'Subscribe')])
     else:
@@ -39,7 +39,6 @@ def received_postback(event):
 def message_handler(event): 
     # get whatever message a user sent the bot
     page.send(event.sender_id, "\n".join(db.get_table("prod_name", "products")))
-    show_persistent_menu(event.sender_id)
     return "Message Processed"
 
 @page.handle_delivery
