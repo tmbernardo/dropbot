@@ -46,9 +46,23 @@ def create_tables():
         )
         """,
         """ 
-        CREATE TABLE IF NOT EXISTS dictionary (
-            prod_id VARCHAR(255) NOT NULL,
-            user_id VARCHAR(255) NOT NULL
+        CREATE TABLE IF NOT EXISTS subscription (
+            prod_id integer,
+            user_id integer,
+            constraint fk_prod_id
+                foreign key (prod_id)
+                REFERENCES products (prod_id),
+            constraint fk_user_id
+                foreign key (user_id)
+                REFERENCES users (user_id)
+        )
+        """,
+        """ 
+        CREATE TABLE IF NOT EXISTS current (
+            prod_id integer,
+            constraint fk_prod_id
+                foreign key (prod_id)
+                REFERENCES products (prod_id)
         )
         """
         )

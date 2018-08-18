@@ -1,33 +1,45 @@
 from fbpage import page
 from fbmq import QuickReply, Template
+from monitor import cur_products
 import os
 import dbhandler as db
 
 page.greeting("Click Get Started below to subscribe!!")
-page.show_starting_button("SUBSCRIBE")
+page.show_starting_button("Subscribe")
+
+pers_menu_btns = [
+        "Current Products",
+        "Unsubscribe"]
 
 def show_persistent_menu():
-    page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'Unsubscribe')])
+    page.show_persistent_menu([Template.ButtonPostBack(btn, btn) for btn in pers_menu_btns])
     return "Done with persistent menu section"
 
 @page.handle_postback
 def received_postback(event):
     show_persistent_menu()
-
+    
     sender_id = event.sender_id
     recipient_id = event.recipient_id
     time_of_postback = event.timestamp
 
     payload = event.payload
 
-    if(payload == "SUBSCRIBE"):
+    page.typing_on(sender_id)
+
+    if(payload == "Subscribe"):
         db.insert("users","fb_id",sender_id)
         page.send(sender_id, "Subbed to all products.")
-
+    
+#    elif(payload == "Current Products"):
+#        page.send(sender_id, "\n".join())
+    
     elif(payload == "Unsubscribe"):
         db.delete_row("users", "fb_id", sender_id)
         page.send(sender_id, "Unsubbed. You may now delete the conversation.")
 
+    page.typing_off(sender_id)
+    
     print("Received postback for user %s and page %s with payload '%s' at %s"
           % (sender_id, recipient_id, payload, time_of_postback))
 
