@@ -9,11 +9,11 @@ def show_persistent_menu():
   page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'MENU_PAYLOAD/Unsubscribe')])
   return "Done with persistent menu section"
 
-@page.callback(['MENU_PAYLOAD/Unsubscribe'])
-def click_unsubscribe(payload, event):
-  click_menu = payload.split('/')[1]
-  print("you clicked %s" % click_menu)
-  db.delete_row("users", "fb_id", event.sender_id)
+# @page.callback(['MENU_PAYLOAD/Unsubscribe'])
+# def click_unsubscribe(payload, event):
+#   click_menu = payload.split('/')[1]
+#   print("you clicked %s" % click_menu)
+#   db.delete_row("users", "fb_id", event.sender_id)
 
 @page.handle_postback
 def received_postback(event):
@@ -24,7 +24,12 @@ def received_postback(event):
     time_of_postback = event.timestamp
 
     payload = event.payload
-    db.insert("users","fb_id",sender_id)
+
+    if(payload == "GET_STARTED"):
+        db.insert("users","fb_id",sender_id)
+
+    elif(payload == "Unsubscribe"):
+        db.delete_row("users", "fb_id", sender_id)
 
     print("Received postback for user %s and page %s with payload '%s' at %s"
           % (sender_id, recipient_id, payload, time_of_postback))
