@@ -8,9 +8,9 @@ import os
 
 seconds = 30
 
-def notify_all(cur_products):
+def notify_all(diff):
     for user in db.get_table("fb_id", "users"):
-        page.send(user, "\n".join(cur_products))
+        page.send(user, "\n".join(diff))
     print("All users notified")
 
 def get_current():
@@ -19,10 +19,12 @@ def get_current():
         tree = html.fromstring(page.content)
 
         # create a list of products:
-        cur_products = tree.xpath('//div[@class="name"]/text()')
-        if cur_products != db.get_table("prod_name","products"):
-            notify_all(cur_products)
-        db.insert_list("products", "prod_name", cur_products)
+        cur_products = set(tree.xpath('//div[@class="name"]/text()'))
+        old_prods = set(db.get_table("prod_name","products"))
+        if cur_products & old_prods:
+            diff = list(cur_products.difference(old_products))
+            notify_all(diff)
+            db.insert_list("products", "prod_name", diff)
         time.sleep(seconds)
 
 if  __name__ == "__main__":
