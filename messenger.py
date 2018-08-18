@@ -5,16 +5,17 @@ from fbmq import QuickReply, Template
 
 page.greeting("Click Get Started below to subscribe!!")
 
-def show_persistent_menu(sender_id):
+def show_persistent_menu():
     page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'MENU_PAYLOAD/Unsubscribe')])
     return "Done with persistent menu section"
 
 @page.handle_postback
 def received_postback(event):
+    show_persistent_menu()
+
     sender_id = event.sender_id
     recipient_id = event.recipient_id
     time_of_postback = event.timestamp
-    # show_persistent_menu(sender_id)
 
     payload = event.payload
 
@@ -24,7 +25,6 @@ def received_postback(event):
 
     elif(payload == "MENU_PAYLOAD/Unsubscribe"):
         db.delete_row("users", "fb_id", sender_id)
-        print("trying to delete")
         page.send(sender_id, "Unsubbed ur bitchass")
 
     print("Received postback for user %s and page %s with payload '%s' at %s"
