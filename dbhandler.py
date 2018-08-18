@@ -37,17 +37,14 @@ DATABASE_URL = os.environ['DATABASE_URL']
 
 # class Subscription(Base):
 #     __tablename__ = 'subscriptions'
-#     prod_id = Column(Integer)
-#     user_id = Column(Integer)
-#     fk_prod_id = Column(Integer, ForeignKey('products.prod_id'))
-#     fk_user_id = Column(Integer, ForeignKey('users.user_id'))
+#     prod_id = Column(Integer, ForeignKey('products.prod_id'))
+#     user_id = Column(Integer, ForeignKey('users.user_id'))
 #     product = relationship("Product", foreign_keys=[prod_id])
 #     user = relationship("User", foreign_keys=[user_id])
 
 # class Current(Base):
 #     __tablename__ = 'current'
-#     prod_id = Column(Integer)
-#     fk_prod_id = Column(Integer, ForeignKey('products.prod_id'))
+#     prod_id = Column(Integer, ForeignKey('products.prod_id'))
 #     product = relationship("Product", foreign_keys=[prod_id])
 
 def execute_cmd(command, rowcount=False, execmany=False, valuelist=False):
@@ -127,16 +124,13 @@ def create_tables():
 
     # if not con.dialect.has_table(con, 'subscriptions'):
     #     subscriptions = Table('subscriptions,', meta,
-    #     Column('prod_id', Integer)
-    #     Column('user_id', Integer)
-    #     Column('fk_prod_id', ForeignKey('products.prod_id'))
-    #     Column('fk_user_id', ForeignKey('users.user_id'))
+    #     Column('prod_id', Integer, ForeignKey('products.prod_id')),
+    #     Column('user_id', Integer, ForeignKey('users.user_id'))
     #     )
 
     # if not con.dialect.has_table(con, 'current'):
     #     current = Table('current', meta,
-    #     Column('prod_id', Integer),
-    #     Column('fk_prod_id', ForeignKey('products.prod_id'))
+    #     Column('prod_id', Integer, ForeignKey('products.prod_id'))
     #     )
 
     # meta.create_all(con)
