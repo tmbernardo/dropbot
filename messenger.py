@@ -5,9 +5,13 @@ from fbmq import QuickReply, Template
 
 page.greeting("Click Get Started below to subscribe!!")
 
-def show_persistent_menu():
-  page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'Unsubscribe')])
-  return "Done with persistent menu section"
+def show_persistent_menu(sender_id):
+    users = db.get_table("users", "fb_id")
+    if(sender_id not in users):
+        page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'Unsubscribe'), Template.ButtonPostBack('Subscribe', 'Subscribe')])
+    else:
+        page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'Unsubscribe')])
+    return "Done with persistent menu section"
 
 # @page.callback(['MENU_PAYLOAD/Unsubscribe'])
 # def click_unsubscribe(payload, event):
@@ -17,15 +21,15 @@ def show_persistent_menu():
 
 @page.handle_postback
 def received_postback(event):
-    show_persistent_menu()
 
     sender_id = event.sender_id
     recipient_id = event.recipient_id
     time_of_postback = event.timestamp
+    show_persistent_menu(sender_id)
 
     payload = event.payload
 
-    if(payload == "SUBSCRIBE"):
+    if(payload == "SUBSCRIBE" or payload == "Subscribe"):
         db.insert("users","fb_id",sender_id)
         page.send(sender_id, "Subbed ur bitchass")
 
