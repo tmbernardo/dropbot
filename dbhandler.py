@@ -36,7 +36,7 @@ def create_tables():
         """
         CREATE TABLE IF NOT EXISTS users (
             user_id SERIAL PRIMARY KEY,
-            fb_id VARCHAR(255) NOT NULL UNIQUE
+            fb_id BIGINT NOT NULL UNIQUE
         )
         """,
         """
