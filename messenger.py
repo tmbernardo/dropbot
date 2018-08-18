@@ -1,7 +1,7 @@
 from fbpage import page
-import dbhandler as db
-import os
 from fbmq import QuickReply, Template
+import os
+import dbhandler as db
 
 page.greeting("Click Get Started below to subscribe!!")
 
@@ -21,11 +21,11 @@ def received_postback(event):
 
     if(payload == "SUBSCRIBE"):
         db.insert("users","fb_id",sender_id)
-        page.send(sender_id, "Subbed ur bitchass")
+        page.send(sender_id, "Subbed to all products.")
 
     elif(payload == "MENU_PAYLOAD/Unsubscribe"):
         db.delete_row("users", "fb_id", sender_id)
-        page.send(sender_id, "Unsubbed ur bitchass")
+        page.send(sender_id, "Unsubbed. You may delete the conversation.")
 
     print("Received postback for user %s and page %s with payload '%s' at %s"
           % (sender_id, recipient_id, payload, time_of_postback))

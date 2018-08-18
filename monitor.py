@@ -1,10 +1,10 @@
-from flask import Flask, request
 from lxml import html
 from fbpage import page
-import requests
-import time
-import dbhandler as db
+from flask import Flask, request
 import os
+import time
+import requests
+import dbhandler as db
 
 seconds = 60
 

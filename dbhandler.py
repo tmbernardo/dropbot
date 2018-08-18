@@ -1,6 +1,6 @@
 #!/usr/bin/python
-import psycopg2
 import os
+import psycopg2
 
 DATABASE_URL = os.environ['DATABASE_URL']
 
