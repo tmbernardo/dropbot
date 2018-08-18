@@ -4,8 +4,20 @@ import os
 
 page.greeting("Click Get Started below to subscribe!!")
 
+def show_persistent_menu():
+  page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'MENU_PAYLOAD/Unsubscribe')])
+  return "Done with persistent menu section"
+
+@page.callback(['MENU_PAYLOAD/Unsubscribe'])
+def click_unsubscribe(payload, event):
+  click_menu = payload.split('/')[1]
+  print("you clicked %s" % click_menu)
+  db.delete_row("users", "fb_id", event.sender_id)
+
 @page.handle_postback
 def received_postback(event):
+    show_persistent_menu()
+
     sender_id = event.sender_id
     recipient_id = event.recipient_id
     time_of_postback = event.timestamp
@@ -20,7 +32,6 @@ def received_postback(event):
 
 @page.handle_message
 def message_handler(event): 
-    print("receive_message")
     # get whatever message a user sent the bot
     page.send(event.sender_id, "\n".join(db.get_table("prod_name", "products")))
     return "Message Processed"
