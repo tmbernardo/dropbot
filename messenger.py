@@ -6,13 +6,7 @@ from fbmq import QuickReply, Template
 page.greeting("Click Get Started below to subscribe!!")
 
 def show_persistent_menu(sender_id):
-    users = db.get_table("fb_id", "users")
-    print(users)
-    page.hide_persistent_menu()
-    if(sender_id not in users):
-        page.show_persistent_menu([Template.ButtonPostBack('Subscribe', 'MENU_PAYLOAD/Subscribe')])
-    else:
-        page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'MENU_PAYLOAD/Unsubscribe')])
+    page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'MENU_PAYLOAD/Unsubscribe')])
     return "Done with persistent menu section"
 
 @page.handle_postback
@@ -20,11 +14,11 @@ def received_postback(event):
     sender_id = event.sender_id
     recipient_id = event.recipient_id
     time_of_postback = event.timestamp
-    show_persistent_menu(sender_id)
+    # show_persistent_menu(sender_id)
 
     payload = event.payload
 
-    if(payload == "SUBSCRIBE" or payload == "MENU_PAYLOAD/Subscribe"):
+    if(payload == "SUBSCRIBE"):
         db.insert("users","fb_id",sender_id)
         page.send(sender_id, "Subbed ur bitchass")
 
@@ -58,5 +52,4 @@ def received_delivery_confirmation(event):
 def received_message_read(event):
     watermark = event.read.get("watermark")
     seq = event.read.get("seq")
-    show_persistent_menu(event.sender_id)
     print("Received message read event for watermark %s and sequence number %s" % (watermark, seq))
