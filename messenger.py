@@ -6,7 +6,7 @@ from fbmq import QuickReply, Template
 page.greeting("Click Get Started below to subscribe!!")
 
 def show_persistent_menu():
-  page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'MENU_PAYLOAD/Unsubscribe')])
+  page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'Unsubscribe')])
   return "Done with persistent menu section"
 
 # @page.callback(['MENU_PAYLOAD/Unsubscribe'])
