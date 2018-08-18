@@ -9,7 +9,7 @@ def show_persistent_menu(sender_id):
     users = db.get_table("fb_id", "users")
     print(users)
     if(sender_id not in users):
-        page.show_persistent_menu([Template.ButtonPostBack('Subscribe', 'Subscribe')])
+        page.show_persistent_menu([Template.ButtonPostBack('Subscribe', 'MENU_PAYLOAD/Subscribe')])
     else:
         page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'MENU_PAYLOAD/Unsubscribe')])
     return "Done with persistent menu section"
