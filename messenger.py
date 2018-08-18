@@ -3,7 +3,7 @@ import dbhandler as db
 import os
 
 page.greeting("Don't miss another drop!~")
-page.show_starting_button("SUBSCRIBE_BUTTON")
+page.show_starting_button("SUBSCRIBE")
 
 @page.handle_optin
 def received_authentication(event):
