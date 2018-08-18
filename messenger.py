@@ -2,8 +2,7 @@ from fbpage import page
 import dbhandler as db
 import os
 
-page.greeting("Don't miss another drop!~")
-page.show_starting_button("SUBSCRIBE")
+page.greeting("Click Get Started below to subscribe!!")
 
 @page.handle_postback
 def received_postback(event):
@@ -17,7 +16,7 @@ def received_postback(event):
     print("Received postback for user %s and page %s with payload '%s' at %s"
           % (sender_id, recipient_id, payload, time_of_postback))
 
-    page.send(sender_id, "subscribed user")
+    page.send(sender_id, "Subbed ur bitchass")
 
 @page.handle_message
 def message_handler(event): 
