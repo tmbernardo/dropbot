@@ -6,7 +6,7 @@ import time
 import dbhandler as db
 import os
 
-seconds = 30
+seconds = 60
 
 def notify_all(diff):
     for user in db.get_table("fb_id", "users"):
@@ -21,6 +21,7 @@ def get_current():
         # create a list of products:
         cur_products = set(tree.xpath('//div[@class="name"]/text()'))
         old_prods = set(db.get_table("prod_name","products"))
+        print(cur_products, old_prods)
         if cur_products & old_prods:
             diff = list(cur_products.difference(old_prods))
             notify_all(diff)
