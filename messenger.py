@@ -27,14 +27,16 @@ def received_postback(event):
 
     if(payload == "GET_STARTED"):
         db.insert("users","fb_id",sender_id)
+        page.send(sender_id, "Subbed ur bitchass")
 
     elif(payload == "Unsubscribe"):
         db.delete_row("users", "fb_id", sender_id)
+        print("trying to delete")
+        page.send(sender_id, "Unsubbed ur bitchass")
 
     print("Received postback for user %s and page %s with payload '%s' at %s"
           % (sender_id, recipient_id, payload, time_of_postback))
 
-    page.send(sender_id, "Subbed ur bitchass")
 
 @page.handle_message
 def message_handler(event): 
