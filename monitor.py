@@ -21,7 +21,7 @@ def get_current():
         # create a list of products:
         cur_products = tree.xpath('//div[@class="name"]/text()')
         if cur_products != db.get_table("prod_id","products"):
-            notify_all()
+            notify_all(cur_products)
         db.insert_list("products", "prod_name", cur_products)
         time.sleep(seconds)
 
