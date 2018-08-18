@@ -4,9 +4,10 @@ import os
 import dbhandler as db
 
 page.greeting("Click Get Started below to subscribe!!")
+page.show_starting_button("SUBSCRIBE")
 
 def show_persistent_menu():
-    page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'MENU_PAYLOAD/Unsubscribe')])
+    page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'Unsubscribe')])
     return "Done with persistent menu section"
 
 @page.handle_postback
@@ -23,9 +24,9 @@ def received_postback(event):
         db.insert("users","fb_id",sender_id)
         page.send(sender_id, "Subbed to all products.")
 
-    elif(payload == "MENU_PAYLOAD/Unsubscribe"):
+    elif(payload == "Unsubscribe"):
         db.delete_row("users", "fb_id", sender_id)
-        page.send(sender_id, "Unsubbed. You may delete the conversation.")
+        page.send(sender_id, "Unsubbed. You may now delete the conversation.")
 
     print("Received postback for user %s and page %s with payload '%s' at %s"
           % (sender_id, recipient_id, payload, time_of_postback))
