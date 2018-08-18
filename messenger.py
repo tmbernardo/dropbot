@@ -1,6 +1,7 @@
 from fbpage import page
 import dbhandler as db
 import os
+from fbmq import QuickReply, Template
 
 page.greeting("Click Get Started below to subscribe!!")
 
