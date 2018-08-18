@@ -1,8 +1,29 @@
 #!/usr/bin/python
+from sqlalchemy import Table, Column, Integer, BigInteger, String, ForeignKey
+from sqlalchemy.orm import relationship
+
 import os
 import psycopg2
+import sqlalchemy
 
 DATABASE_URL = os.environ['DATABASE_URL']
+
+# def connect(user, password, db, host='localhost', port=5432):
+#     '''Returns a connection and a metadata object'''
+#     # We connect with the help of the PostgreSQL URL
+#     # postgresql://federer:grandestslam@localhost:5432/tennis
+#     url = 'postgresql://{}:{}@{}:{}/{}'
+#     url = url.format(user, password, host, port, db)
+
+#     # The return value of create_engine() is our connection object
+#     con = sqlalchemy.create_engine(url, client_encoding='utf8')
+
+#     # We then bind the connection to MetaData()
+#     meta = sqlalchemy.MetaData(bind=con, reflect=True)
+#     Base = declarative_base()
+
+
+#     return con, meta
 
 def execute_cmd(command, rowcount=False, execmany=False, valuelist=False):
     """ executes sql command """
@@ -66,13 +87,69 @@ def create_tables():
         )
         """
         )
+    
+    # if not con.dialect.has_table(con, 'users'):
+    #     users = Table('users', meta,
+    #     Column('user_id', String, primary_key=True),
+    #     Column('fb_id', BigInteger, nullable=False, unique=True)
+    #     )
+
+    # if not con.dialect.has_table(con, 'products'):
+    #     products = Table('products', meta,
+    #     Column('prod_id', String, primary_key=True),
+    #     Column('prod_name', String, nullable=False, unique=True)
+    #     )
+
+    # if not con.dialect.has_table(con, 'subscriptions'):
+    #     subscriptions = Table('subscriptions,', meta,
+    #     Column('prod_id', Integer)
+    #     Column('user_id', Integer)
+    #     Column('fk_prod_id', ForeignKey('products.prod_id'))
+    #     Column('fk_user_id', ForeignKey('users.user_id'))
+    #     )
+
+    # if not con.dialect.has_table(con, 'current'):
+    #     current = Table('current', meta,
+    #     Column('prod_id', Integer),
+    #     Column('fk_prod_id', ForeignKey('products.prod_id'))
+    #     )
+
+    # meta.create_all(con)
 
     for cmd in cmds:
         execute_cmd(cmd)
 
+# class User(Base):
+#     __tablename__ = 'users'
+#     user_id = Column(String, primary_key=True)
+#     fb_id = Column(BigInteger, nullable=False, unique=True)
+
+# class Product(Base):
+#     __tablename__ = 'products'
+#     prod_id = Column(String, primary_key=True)
+#     prod_name = Column(String, nullable=False, unique=True)
+
+# class Subscription(Base):
+#     __tablename__ = 'subscriptions'
+#     prod_id = Column(Integer)
+#     user_id = Column(Integer)
+#     fk_prod_id = Column(Integer, ForeignKey('products.prod_id'))
+#     fk_user_id = Column(Integer, ForeignKey('users.user_id'))
+#     product = relationship("Product", foreign_keys=[prod_id])
+#     user = relationship("User", foreign_keys=[user_id])
+
+# class Current(Base):
+#     __tablename__ = 'current'
+#     prod_id = Column(Integer)
+#     fk_prod_id = Column(Integer, ForeignKey('products.prod_id'))
+#     product = relationship("Product", foreign_keys=[prod_id])
+
 def insert(table, column ,value):
     """ insert a new value into a table """
     cmd = """INSERT INTO {}({}) VALUES('{}') ON CONFLICT ({}) DO NOTHING;""".format(table, column, value, column)
+    # cmd = "{}.insert().values({}={})".format(table, column, value)
+    # cmd = cmd.on_conflict_do_nothing(index_elements=[column])
+    # con.execute(cmd)
     execute_cmd(cmd)
 
 def insert_list(table, column, vlist):
@@ -83,18 +160,16 @@ def insert_list(table, column, vlist):
         lst.append(e)
     
     cmd = "INSERT INTO {} ({}) VALUES (%s) ON CONFLICT ({}) DO NOTHING".format(table, column, column)
+    # cmd = "meta.tables[{}].insert()".format(table)
+    # cmd = cmd.on_conflict_do_nothing(index_elements=[column])
+    # con.execute(cmd, lst)
     execute_cmd(cmd, execmany=True, valuelist=lst)
-
-def update_vendor(vendor_id, vendor_name):
-    """ update name based on the id """
-    cmd = """ UPDATE vendors
-                SET vendor_name = %s
-                WHERE vendor_id = %s""" 
-    return execute_cmd(cmd, True)
 
 def delete_row(table, column, ID):
     """ delete entry by id """
     cmd = "DELETE FROM {} WHERE {} = {}".format(table, column, ID)
+    # cmd = "{}.query.filter_by({}={}).delete()".format(table, column, ID)
+    # cmd.execute()
     return execute_cmd(cmd, True)
 
 def get_table(ID, table):
@@ -112,6 +187,10 @@ def get_table(ID, table):
             row = cur.fetchone()
  
         cur.close()
+
+        # for row in con.execute("{}.select()".format(table)):
+        #     l.append(row[0])
+
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:

@@ -4,3 +4,4 @@ lxml==3.6.0
 fbmq==2.5.0
 psycopg2==2.7.5
 psycopg2-binary==2.7.5
+sqlalchemy==1.2.10
