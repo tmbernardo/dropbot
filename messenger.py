@@ -30,7 +30,7 @@ def received_postback(event):
         page.send(sender_id, "Subbed ur bitchass")
 
     elif(payload == "Unsubscribe"):
-        db.delete_row("users", "fb_id", sender_id)
+        db.delete_row("users", "fb_id", str(sender_id))
         print("trying to delete")
         page.send(sender_id, "Unsubbed ur bitchass")
 
