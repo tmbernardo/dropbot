@@ -15,13 +15,13 @@ def notify_all(diff):
 
 def get_current():
     while(True):
+        print("Checking if new products are on ACRNM")
         page = requests.get('http://acrnm.com')
         tree = html.fromstring(page.content)
 
         # create a list of products:
         cur_products = set(tree.xpath('//div[@class="name"]/text()'))
         old_prods = set(db.get_table("prod_name","products"))
-        print(cur_products, old_prods)
         if cur_products != old_prods:
             diff = list(cur_products.difference(old_prods))
             notify_all(diff)
