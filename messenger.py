@@ -8,6 +8,7 @@ page.greeting("Click Get Started below to subscribe!!")
 def show_persistent_menu(sender_id):
     users = db.get_table("fb_id", "users")
     print(users)
+    page.hide_persistent_menu()
     if(sender_id not in users):
         page.show_persistent_menu([Template.ButtonPostBack('Subscribe', 'MENU_PAYLOAD/Subscribe')])
     else:
