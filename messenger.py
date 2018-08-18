@@ -7,15 +7,15 @@ page.greeting("Click Get Started below to subscribe!!")
 
 def show_persistent_menu(sender_id):
     users = db.get_table("fb_id", "users")
+    print(users)
     if(sender_id not in users):
         page.show_persistent_menu([Template.ButtonPostBack('Subscribe', 'Subscribe')])
     else:
-        page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'Unsubscribe')])
+        page.show_persistent_menu([Template.ButtonPostBack('Unsubscribe', 'MENU_PAYLOAD/Unsubscribe')])
     return "Done with persistent menu section"
 
 @page.handle_postback
 def received_postback(event):
-
     sender_id = event.sender_id
     recipient_id = event.recipient_id
     time_of_postback = event.timestamp
@@ -23,11 +23,11 @@ def received_postback(event):
 
     payload = event.payload
 
-    if(payload == "SUBSCRIBE" or payload == "Subscribe"):
+    if(payload == "SUBSCRIBE" or payload == "MENU_PAYLOAD/Subscribe"):
         db.insert("users","fb_id",sender_id)
         page.send(sender_id, "Subbed ur bitchass")
 
-    elif(payload == "Unsubscribe"):
+    elif(payload == "MENU_PAYLOAD/Unsubscribe"):
         db.delete_row("users", "fb_id", sender_id)
         print("trying to delete")
         page.send(sender_id, "Unsubbed ur bitchass")
