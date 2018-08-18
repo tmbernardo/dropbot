@@ -22,7 +22,6 @@ DATABASE_URL = os.environ['DATABASE_URL']
 #     meta = sqlalchemy.MetaData(bind=con, reflect=True)
 #     Base = declarative_base()
 
-
 #     return con, meta
 
 # class User(Base):
