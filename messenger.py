@@ -25,7 +25,7 @@ def received_postback(event):
 
     payload = event.payload
 
-    if(payload == "GET_STARTED"):
+    if(payload == "SUBSCRIBE"):
         db.insert("users","fb_id",sender_id)
         page.send(sender_id, "Subbed ur bitchass")
 
