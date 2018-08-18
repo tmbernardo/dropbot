@@ -57,5 +57,5 @@ def received_delivery_confirmation(event):
 def received_message_read(event):
     watermark = event.read.get("watermark")
     seq = event.read.get("seq")
-    show_persistent_menu(even.sender_id)
+    show_persistent_menu(event.sender_id)
     print("Received message read event for watermark %s and sequence number %s" % (watermark, seq))
