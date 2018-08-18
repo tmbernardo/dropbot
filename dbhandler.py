@@ -25,6 +25,31 @@ DATABASE_URL = os.environ['DATABASE_URL']
 
 #     return con, meta
 
+# class User(Base):
+#     __tablename__ = 'users'
+#     user_id = Column(String, primary_key=True)
+#     fb_id = Column(BigInteger, nullable=False, unique=True)
+
+# class Product(Base):
+#     __tablename__ = 'products'
+#     prod_id = Column(String, primary_key=True)
+#     prod_name = Column(String, nullable=False, unique=True)
+
+# class Subscription(Base):
+#     __tablename__ = 'subscriptions'
+#     prod_id = Column(Integer)
+#     user_id = Column(Integer)
+#     fk_prod_id = Column(Integer, ForeignKey('products.prod_id'))
+#     fk_user_id = Column(Integer, ForeignKey('users.user_id'))
+#     product = relationship("Product", foreign_keys=[prod_id])
+#     user = relationship("User", foreign_keys=[user_id])
+
+# class Current(Base):
+#     __tablename__ = 'current'
+#     prod_id = Column(Integer)
+#     fk_prod_id = Column(Integer, ForeignKey('products.prod_id'))
+#     product = relationship("Product", foreign_keys=[prod_id])
+
 def execute_cmd(command, rowcount=False, execmany=False, valuelist=False):
     """ executes sql command """
     rv = None
@@ -119,30 +144,6 @@ def create_tables():
     for cmd in cmds:
         execute_cmd(cmd)
 
-# class User(Base):
-#     __tablename__ = 'users'
-#     user_id = Column(String, primary_key=True)
-#     fb_id = Column(BigInteger, nullable=False, unique=True)
-
-# class Product(Base):
-#     __tablename__ = 'products'
-#     prod_id = Column(String, primary_key=True)
-#     prod_name = Column(String, nullable=False, unique=True)
-
-# class Subscription(Base):
-#     __tablename__ = 'subscriptions'
-#     prod_id = Column(Integer)
-#     user_id = Column(Integer)
-#     fk_prod_id = Column(Integer, ForeignKey('products.prod_id'))
-#     fk_user_id = Column(Integer, ForeignKey('users.user_id'))
-#     product = relationship("Product", foreign_keys=[prod_id])
-#     user = relationship("User", foreign_keys=[user_id])
-
-# class Current(Base):
-#     __tablename__ = 'current'
-#     prod_id = Column(Integer)
-#     fk_prod_id = Column(Integer, ForeignKey('products.prod_id'))
-#     product = relationship("Product", foreign_keys=[prod_id])
 
 def insert(table, column ,value):
     """ insert a new value into a table """
