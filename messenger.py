@@ -1,6 +1,5 @@
 from fbpage import page
 from fbmq import QuickReply, Template
-from monitor import cur_products
 import os
 import dbhandler as db
 
