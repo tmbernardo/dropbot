@@ -1,12 +1,14 @@
 #!/usr/bin/python
 from sqlalchemy import Table, Column, Integer, BigInteger, String, ForeignKey
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
 
 import os
 import psycopg2
 import sqlalchemy
 
 DATABASE_URL = os.environ['DATABASE_URL']
+Base = declarative_base()
 
 # def connect(user, password, db, host='localhost', port=5432):
 #     '''Returns a connection and a metadata object'''
