@@ -8,7 +8,7 @@ import psycopg2
 import sqlalchemy
 
 DATABASE_URL = os.environ['DATABASE_URL']
-Base = declarative_base()
+# Base = declarative_base()
 
 # def connect(user, password, db, host='localhost', port=5432):
 #     '''Returns a connection and a metadata object'''
