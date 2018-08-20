@@ -54,7 +54,7 @@ def execute_cmd(command, rowcount=False, execmany=False, valuelist=False):
     conn = None
     try:
         # connect to the PostgreSQL server
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        conn = psycopg2.connect(DATABASE_URL, sslmode='allow')
         cur = conn.cursor()
         if not execmany:
             # execute one command
@@ -173,7 +173,7 @@ def get_table(ID, table):
     conn = None
     l = []
     try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        conn = psycopg2.connect(DATABASE_URL, sslmode='allow')
         cur = conn.cursor()
         cur.execute("SELECT {} FROM {}".format(ID, table))
         row = cur.fetchone()
