@@ -90,7 +90,8 @@ def insert_list(table, column, vlist):
     """ insert multiple entries into a table  """
 
     table = table_dict[table]
-    objects = [table(getattr(column)=value ) for value in vlist]
+    # need to instantiate objects
+    objects = [setattr(table, column,value) for value in vlist]
     sess.bulk_save_objects(objects)
 
 def delete_row(table, column, ID):
@@ -101,7 +102,7 @@ def delete_row(table, column, ID):
 def get_table(table1, column1, table2, column2):
     """ query data from a table """
     query = session.query(table1).options(
-            joinedload(table1.(getattr(column1)), innerjoin=True)\
-                    .joinedload(table2.(getattr(column2)), innerjoin=True)
+            joinedload(table1(getattr(column1)), innerjoin=True)\
+                    .joinedload(table2(getattr(column2)), innerjoin=True))
 
     return query.all()
