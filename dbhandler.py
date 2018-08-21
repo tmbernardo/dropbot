@@ -10,72 +10,49 @@ import sqlalchemy
 DATABASE_URL = os.environ['DATABASE_URL']
 Base = declarative_base()
 
-# def connect(user, password, db, host='localhost', port=5432):
-#     '''Returns a connection and a metadata object'''
-#     # We connect with the help of the PostgreSQL URL
-#     # postgresql://federer:grandestslam@localhost:5432/tennis
-#     url = 'postgresql://{}:{}@{}:{}/{}'
-#     url = url.format(user, password, host, port, db)
+def connect(user, password, db, host='localhost', port=5432):
+    '''Returns a connection and a metadata object'''
+    # We connect with the help of the PostgreSQL URL
+    url = 'postgresql://{}:{}@{}:{}/{}'
+    url = url.format(user, password, host, port, db)
 
-#     # The return value of create_engine() is our connection object
-#     con = sqlalchemy.create_engine(url, client_encoding='utf8')
+    # The return value of create_engine() is our connection object
+    con = sqlalchemy.create_engine(url, client_encoding='utf8')
 
-#     # We then bind the connection to MetaData()
-#     meta = sqlalchemy.MetaData(bind=con, reflect=True)
-#     Base = declarative_base()
+    # We then bind the connection to MetaData()
+    meta = sqlalchemy.MetaData(bind=con, reflect=True)
+    Base = declarative_base()
 
-#     return con, meta
+    return con, meta
 
-# class User(Base):
-#     __tablename__ = 'users'
-#     user_id = Column(String, primary_key=True)
-#     fb_id = Column(BigInteger, nullable=False, unique=True)
+class User(Base):
+    __tablename__ = 'users'
+    user_id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
+    fb_id = Column(BigInteger, nullable=False, unique=True)
 
-# class Product(Base):
-#     __tablename__ = 'products'
-#     prod_id = Column(String, primary_key=True)
-#     prod_name = Column(String, nullable=False, unique=True)
+class Product(Base):
+    __tablename__ = 'products'
+    prod_id = Column(Integer, Sequence('prod_id_seq'), primary_key=True)
+    prod_name = Column(String, nullable=False, unique=True)
 
-# class Subscription(Base):
-#     __tablename__ = 'subscriptions'
-#     prod_id = Column(Integer, ForeignKey('products.prod_id'))
-#     user_id = Column(Integer, ForeignKey('users.user_id'))
-#     product = relationship("Product", foreign_keys=[prod_id])
-#     user = relationship("User", foreign_keys=[user_id])
+class Subscription(Base):
+    __tablename__ = 'subscriptions'
+    sub_id = Column(Integer, Sequence('sub_id_seq'), primary_key=True)
+    prod_id = Column(Integer, ForeignKey('products.prod_id'))
+    user_id = Column(Integer, ForeignKey('users.user_id'))
+    product = relationship("Product", foreign_keys=[prod_id])
+    user = relationship("User", foreign_keys=[user_id])
 
-# class Current(Base):
-#     __tablename__ = 'current'
-#     prod_id = Column(Integer, ForeignKey('products.prod_id'))
-#     product = relationship("Product", foreign_keys=[prod_id])
+class Current(Base):
+    __tablename__ = 'current'
+    curr_id = Column(Integer, Sequence('curr_id_seq'), primary_key=True)
+    prod_id = Column(Integer, ForeignKey('products.prod_id'))
+    product = relationship("Product", foreign_keys=[prod_id])
 
-def execute_cmd(command, rowcount=False, execmany=False, valuelist=False):
-    """ executes sql command """
-    rv = None
-    conn = None
-    try:
-        # connect to the PostgreSQL server
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        cur = conn.cursor()
-        if not execmany:
-            # execute one command
-            cur.execute(command)
-        else:
-            # execute many
-            cur.executemany(command, valuelist)
-        # returns rowcount if rowcount is true
-        rv = True if rowcount else False
-        # commit the changes
-        conn.commit()
-        # close communication with the PostgreSQL database server
-        cur.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
 
-def create_tables():
+def create_tables(con):
     """ create tables in the PostgreSQL database"""
+ 
     cmds = (
         """
         CREATE TABLE IF NOT EXISTS users (
@@ -110,34 +87,9 @@ def create_tables():
         )
         """
         )
-    
-    # if not con.dialect.has_table(con, 'users'):
-    #     users = Table('users', meta,
-    #     Column('user_id', String, primary_key=True),
-    #     Column('fb_id', BigInteger, nullable=False, unique=True)
-    #     )
-
-    # if not con.dialect.has_table(con, 'products'):
-    #     products = Table('products', meta,
-    #     Column('prod_id', String, primary_key=True),
-    #     Column('prod_name', String, nullable=False, unique=True)
-    #     )
-
-    # if not con.dialect.has_table(con, 'subscriptions'):
-    #     subscriptions = Table('subscriptions,', meta,
-    #     Column('prod_id', Integer, ForeignKey('products.prod_id')),
-    #     Column('user_id', Integer, ForeignKey('users.user_id'))
-    #     )
-
-    # if not con.dialect.has_table(con, 'current'):
-    #     current = Table('current', meta,
-    #     Column('prod_id', Integer, ForeignKey('products.prod_id'))
-    #     )
-
-    # meta.create_all(con)
 
     for cmd in cmds:
-        execute_cmd(cmd)
+        con.execute(cmd)
 
 
 def insert(table, column ,value):
