@@ -7,25 +7,14 @@ import os
 import psycopg2
 import sqlalchemy
 
-DATABASE_URL = os.environ['DATABASE_URL']
 Base = declarative_base()
 
-def connect(user, password, db, host='localhost', port=5432):
-    '''Returns a connection and a metadata object'''
-    # We connect with the help of the PostgreSQL URL
-    url = 'postgresql://{}:{}@{}:{}/{}'
-    url = url.format(user, password, host, port, db)
+url = os.environ['DATABASE_URL']
+con = sqlalchemy.create_engine(url, client_encoding='utf8')
+Session = sessionmaker(bind=con, autocommit=True)
+session = Session()
 
-    # The return value of create_engine() is our connection object
-    con = sqlalchemy.create_engine(url, client_encoding='utf8')
-
-    # We then bind the connection to MetaData()
-    meta = sqlalchemy.MetaData(bind=con, reflect=True)
-    Base = declarative_base()
-
-    return con, meta
-
-class User(Base):
+class Users(Base):
     __tablename__ = 'users'
     user_id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
     fb_id = Column(BigInteger, nullable=False, unique=True)
@@ -49,8 +38,14 @@ class Current(Base):
     prod_id = Column(Integer, ForeignKey('products.prod_id'))
     product = relationship("Product", foreign_keys=[prod_id])
 
+table_dict = {
+        "users": User,
+        "products": Product,
+        "subscriptions": Subscription,
+        "current": Current
+        }
 
-def create_tables(con):
+def create_tables(sess):
     """ create tables in the PostgreSQL database"""
  
     cmds = (
@@ -89,59 +84,24 @@ def create_tables(con):
         )
 
     for cmd in cmds:
-        con.execute(cmd)
-
-
-def insert(table, column ,value):
-    """ insert a new value into a table """
-    cmd = """INSERT INTO {}({}) VALUES('{}') ON CONFLICT ({}) DO NOTHING;""".format(table, column, value, column)
-    # cmd = "{}.insert().values({}={})".format(table, column, value)
-    # cmd = cmd.on_conflict_do_nothing(index_elements=[column])
-    # con.execute(cmd)
-    execute_cmd(cmd)
+        sess.execute(cmd)
 
 def insert_list(table, column, vlist):
     """ insert multiple entries into a table  """
-    lst = []
-    for i in range(len(vlist)):
-        e = (vlist[i], )
-        lst.append(e)
-    
-    cmd = "INSERT INTO {} ({}) VALUES (%s) ON CONFLICT ({}) DO NOTHING".format(table, column, column)
-    # cmd = "meta.tables[{}].insert()".format(table)
-    # cmd = cmd.on_conflict_do_nothing(index_elements=[column])
-    # con.execute(cmd, lst)
-    execute_cmd(cmd, execmany=True, valuelist=lst)
+
+    table = table_dict[table]
+    objects = [table(getattr(column)=value ) for value in vlist]
+    sess.bulk_save_objects(objects)
 
 def delete_row(table, column, ID):
     """ delete entry by id """
-    cmd = "DELETE FROM {} WHERE {} = {}".format(table, column, ID)
-    # cmd = "{}.query.filter_by({}={}).delete()".format(table, column, ID)
-    # cmd.execute()
-    return execute_cmd(cmd, True)
+    table = table_dict[table]
+    table.query.filter(table(getattr(column)=value)).delete()
 
-def get_table(ID, table):
+def get_table(table1, column1, table2, column2):
     """ query data from a table """
-    conn = None
-    l = []
-    try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='allow')
-        cur = conn.cursor()
-        cur.execute("SELECT {} FROM {}".format(ID, table))
-        row = cur.fetchone()
- 
-        while row is not None:
-            l.append(row[0])
-            row = cur.fetchone()
- 
-        cur.close()
+    query = session.query(table1).options(
+            joinedload(table1.(getattr(column1)), innerjoin=True)\
+                    .joinedload(table2.(getattr(column2)), innerjoin=True)
 
-        # for row in con.execute("{}.select()".format(table)):
-        #     l.append(row[0])
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-        return l
+    return query.all()
