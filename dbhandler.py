@@ -85,4 +85,4 @@ def get_table(table, column):
     sess = start_sess()
     results = sess.query(getattr(table_dict[table],column)).all()
     sess.close()
-    return next(zip(*results))
+    return list(zip(*results))
