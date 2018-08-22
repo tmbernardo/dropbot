@@ -31,7 +31,7 @@ def received_postback(event):
         page.send(sender_id, "Subbed to all products.")
     
     elif(payload == "Current Products"):
-       page.send(event.sender_id, "\n".join(db.get_table("products", "prod_name")))
+        page.send(event.sender_id, "\n".join(db.get_table("products", "prod_name")))
     
     elif(payload == "Unsubscribe"):
         db.delete_row("users", "fb_id", sender_id)
