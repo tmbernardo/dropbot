@@ -21,7 +21,7 @@ def get_current():
 
         # create a list of products:
         cur_products = set(tree.xpath('//div[@class="name"]/text()'))
-        old_prods = set(db.get_table("products","prod_name"))
+        old_prods = set(list(db.get_table("products","prod_name")))
         print("old prods")
         print(old_prods)
         print("cur_products")
