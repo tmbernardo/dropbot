@@ -66,7 +66,7 @@ def insert_list(table, column, vlist):
 
 def delete_row(table, column, ID):
     """ delete entry by id """
-    start_sess()
+    sess = start_sess()
     table = table_dict[table]
     sess.query(table).filter(getattr(table,column)==ID).delete()
     sess.close()
