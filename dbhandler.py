@@ -9,11 +9,9 @@ import sqlalchemy
 
 Base = declarative_base()
 
-#url = os.environ['DATABASE_URL']
-url="postgres://bjihtaefdfdzxn:5d519eff130605f764b523746a4b919e9f1b521c794a1c013f55375ce01a4463@ec2-50-16-196-138.compute-1.amazonaws.com:5432/d8k7t1e86358jk"
-engine = sqlalchemy.create_engine(url, client_encoding='utf8')
-Session = sessionmaker(bind=engine, autocommit=True)
-sess = Session()
+url = os.environ['DATABASE_URL']
+#url="postgres://bjihtaefdfdzxn:5d519eff130605f764b523746a4b919e9f1b521c794a1c013f55375ce01a4463@ec2-50-16-196-138.compute-1.amazonaws.com:5432/d8k7t1e86358jk"
+engine = sqlalchemy.create_engine(url, pool_size=17, client_encoding='utf8')
 
 class users(Base):
     __tablename__ = 'users'
@@ -46,11 +44,16 @@ table_dict = {
         "current": current
         }
 
+def start_sess():
+    Session = sessionmaker(bind=engine, autocommit=True)
+    return Session()
+
 def create_tables():
     Base.metadata.create_all(engine)
 
 def insert_list(table, column, vlist):
     """ insert multiple entries into a table  """
+    sess = start_sess()
     objects = []
     table = table_dict[table]
     
@@ -59,20 +62,27 @@ def insert_list(table, column, vlist):
         setattr(row, column, v)
         objects.append(row)
     sess.bulk_save_objects(objects)
+    sess.close()
 
 def delete_row(table, column, ID):
     """ delete entry by id """
+    start_sess()
     table = table_dict[table]
     sess.query(table).filter(getattr(table,column)==ID).delete()
+    sess.close()
 
 def get_join(table1, column1, table2, column2):
     """ query data from a table """
+    sess = start_sess()
     query = sess.query(table1).options(
             joinedload(getattr(table1,column1), innerjoin=True)\
                     .joinedload(getattr(table2,column2), innerjoin=True))
-    return query.all()
+    results = query.all()
+    sess.close()
+    return results
 
 def get_table(table, column):
+    sess = start_sess()
     results = sess.query(getattr(table_dict[table],column)).all()
+    sess.close()
     return next(zip(*results))
-sess.close()
