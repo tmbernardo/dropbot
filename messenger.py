@@ -30,7 +30,7 @@ def received_postback(event):
         db.insert_list("users","fb_id",[sender_id])
         page.send(sender_id, "Subbed to all products.")
     
-   elif(payload == "Current Products"):
+    elif(payload == "Current Products"):
        page.send(event.sender_id, "\n".join(db.get_table("products", "prod_name")))
     
     elif(payload == "Unsubscribe"):
