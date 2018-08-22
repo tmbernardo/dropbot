@@ -73,8 +73,6 @@ def get_join(table1, column1, table2, column2):
     return query.all()
 
 def get_table(table, column):
-    return sess.query(getattr(table_dict[table],column)).all()
-
-#insert_list('products','prod_name', ['asdf','asdffths','artbnbgtyhn','asdftrns'])
-print(*get_table('products','prod_name'))
+    results = sess.query(getattr(table_dict[table],column)).all()
+    return next(zip(*results))
 sess.close()
