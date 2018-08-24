@@ -44,55 +44,51 @@ table_dict = {
         }
 
 def start_sess():
-    Session = sessionmaker(bind=engine, autocommit=True)
+    Session = sessionmaker(bind=engine, autocommit=False)
     return Session()
 
 def create_tables():
+    sess = start_sess()
     Base.metadata.create_all(engine)
+    sess.commit()
+    sess.close()
 
 def insert_products(vlist):
     sess = start_sess()
     prods = []
-    users = get_object("users")
+    users = get_object(Users)
 
     for v in vlist:
-        product = products(prod_name=v)
-        products.subscribers.extend(users)
-        objects.append(product)
+        product = Products(prod_name=v)
+        product.subscribers.extend(users)
+        prods.append(product)
 
-    sess.bulk_save_objects(objects)
+    sess.add_all(prods)
+    sess.commit()
     sess.close()
 
 def insert_users(vlist):
     sess = start_sess()
-    objects = []
-    table = table_dict[table]
+    users = []
+    products = get_object(Products)
     
     for v in vlist:
-        row = table()
-        setattr(row, column, v)
-        objects.append(row)
-    sess.bulk_save_objects(objects)
+        user = Users(fb_id=v)
+        user.subscriptions.extend(products)
+        users.append(user)
+    sess.add_all(users)
+    sess.commit()
     sess.close()
 
-def insert_list(table, column, vlist):
-    """ insert multiple entries into a table  """
+def delete_user(fb_id):
+    """ delete entry by fb_id
+    TODO: try catch if fb_id is not found
+    """
     sess = start_sess()
-    objects = []
-    table = table_dict[table]
-    
-    for v in vlist:
-        row = table()
-        setattr(row, column, v)
-        objects.append(row)
-    sess.bulk_save_objects(objects)
-    sess.close()
-
-def delete_row(table, column, ID):
-    """ delete entry by id """
-    sess = start_sess()
-    table = table_dict[table]
-    sess.query(table).filter(getattr(table,column)==ID).delete()
+    user = sess.query(Users).filter(Users.fb_id==fb_id).first()
+    user.subscriptions.clear()
+    sess.delete(user)
+    sess.commit()
     sess.close()
 
 def get_join(table1, column1, table2, column2):
@@ -124,5 +120,4 @@ def get_table(table, column):
     sess = start_sess()
     results = sess.query(getattr(table_dict[table],column)).all()
     sess.close()
-    return list(zip(*results))[0] if results != None else []
-
+    return  [] if len(results)==0 else list(zip(*results))[0]

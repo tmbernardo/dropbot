@@ -22,7 +22,7 @@ def get_current():
         # create a list of products:
         cur_products = set(tree.xpath('//div[@class="name"]/text()'))
         old_prods = set(db.get_table("Products","prod_name"))
-        if old_prods == None:
+        if len(old_prods)<1:
             db.insert_products(cur_products)
         elif cur_products != old_prods:
             diff = list(cur_products.difference(old_prods))
