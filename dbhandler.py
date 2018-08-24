@@ -50,6 +50,31 @@ def start_sess():
 def create_tables():
     Base.metadata.create_all(engine)
 
+def insert_products(vlist):
+    sess = start_sess()
+    prods = []
+    users = get_object("users")
+
+    for v in vlist:
+        product = products(prod_name=v)
+        products.subscribers.extend(users)
+        objects.append(product)
+
+    sess.bulk_save_objects(objects)
+    sess.close()
+
+def insert_users(vlist):
+    sess = start_sess()
+    objects = []
+    table = table_dict[table]
+    
+    for v in vlist:
+        row = table()
+        setattr(row, column, v)
+        objects.append(row)
+    sess.bulk_save_objects(objects)
+    sess.close()
+
 def insert_list(table, column, vlist):
     """ insert multiple entries into a table  """
     sess = start_sess()
@@ -89,9 +114,15 @@ def get_current():
     sess.close()
     return results
 
+def get_object(table):
+    sess = start_sess()
+    results = sess.query(table).all()
+    sess.close()
+    return results
+
 def get_table(table, column):
     sess = start_sess()
     results = sess.query(getattr(table_dict[table],column)).all()
     sess.close()
-    return list(zip(*results))[0] if results == None else []
+    return list(zip(*results))[0] if results != None else []
 
