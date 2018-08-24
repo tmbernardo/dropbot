@@ -53,6 +53,12 @@ def create_tables():
     sess.commit()
     sess.close()
 
+def user_exists():
+    pass
+
+def prod_exists():
+    pass
+
 def insert_products(vlist):
     sess = start_sess()
     prods = []
@@ -67,6 +73,8 @@ def insert_products(vlist):
     sess.commit()
     sess.close()
 
+    return prods
+
 def insert_users(vlist):
     sess = start_sess()
     users = []
@@ -76,39 +84,20 @@ def insert_users(vlist):
         user = Users(fb_id=v)
         user.subscriptions.extend(products)
         users.append(user)
+    
     sess.add_all(users)
     sess.commit()
     sess.close()
 
-def delete_user(fb_id):
-    """ delete entry by fb_id
-    TODO: try catch if fb_id is not found
-    """
+def insert_current(vlist):
     sess = start_sess()
-    user = sess.query(Users).filter(Users.fb_id==fb_id).first()
-    user.subscriptions.clear()
-    sess.delete(user)
-    sess.commit()
-    sess.close()
 
-def get_join(table1, column1, table2, column2):
-    """ query data from a table """
-    sess = start_sess()
-    query = sess.query(table1).options(
-            joinedload(getattr(table1,column1), innerjoin=True)\
-                    .joinedload(getattr(table2,column2), innerjoin=True))
-    results = query.all()
     sess.close()
-    return results
 
 def get_current():
     sess = start_sess()
-    query = sess.query(Current).options(
-            joinedload(Current.prod_id, innerjoin=True)\
-                    .joinedload(Products.prod_id, innerjoin=True))
-    results = query.all()
-    sess.close()
-    return results
+    current = sess.query(Products.name).join(Current).all()
+    return list(zip(*results))[0]
 
 def get_object(table):
     sess = start_sess()
@@ -121,3 +110,17 @@ def get_table(table, column):
     results = sess.query(getattr(table_dict[table],column)).all()
     sess.close()
     return  [] if len(results)==0 else list(zip(*results))[0]
+
+def delete_user(fb_id):
+    """ delete entry and associations by fb_id
+    TODO: try catch if fb_id is not found
+    """
+    sess = start_sess()
+    user = sess.query(Users).filter(Users.fb_id==fb_id).first()
+    user.subscriptions.clear()
+    sess.delete(user)
+    sess.commit()
+    sess.close()
+
+def delete_sub(fb_id, prod_name):
+    pass
