@@ -14,27 +14,33 @@ url="postgres://bjihtaefdfdzxn:5d519eff130605f764b523746a4b919e9f1b521c794a1c013
 engine = sql.create_engine(url, pool_size=17, client_encoding='utf8')
 
 class Users(Base):
+    __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     fb_id = Column(BigInteger, nullable=False, unique=True)
-    subscriptions = relationship('Products', secondary='Subs', backref=sql.orm.backref('subscribers', lazy='dynamic'))
+    subscriptions = relationship('Products', secondary='subscriptions', backref=sql.orm.backref('subscribers', lazy='dynamic'))
 
 class Products(Base):
+    __tablename__ = "products"
     id = Column(Integer, primary_key=True)
     prod_name = Column(String, nullable=False, unique=True)
 
 class Subs(Base):
+    __tablename__ = "subscriptions"
+    id = Column(Integer, primary_key=True)
     prod_id = Column(Integer, ForeignKey('products.id'))
     user_id = Column(Integer, ForeignKey('users.id'))
 
 class Current(Base):
+    __tablename__ = "current"
     id = Column(Integer, primary_key=True)
-    prod_id = Column(Integer, ForeignKey('products.id'))
+    prod_id = Column(Integer, ForeignKey('products.id'), primary_key=True)
+    product = relationship('Products', uselist=False)
 
 table_dict = {
-        "users": users,
-        "products": products,
-        "subscriptions": subscriptions,
-        "current": current
+        "Users": Users,
+        "Products": Products,
+        "Subscriptions": Subs,
+        "Current": Current
         }
 
 def start_sess():
@@ -76,9 +82,9 @@ def get_join(table1, column1, table2, column2):
 
 def get_current():
     sess = start_sess()
-    query = sess.query(current).options(
-            joinedload(current.prod_id, innerjoin=True)\
-                    .joinedload(products.prod_id, innerjoin=True))
+    query = sess.query(Current).options(
+            joinedload(Current.prod_id, innerjoin=True)\
+                    .joinedload(Products.prod_id, innerjoin=True))
     results = query.all()
     sess.close()
     return results
@@ -87,6 +93,5 @@ def get_table(table, column):
     sess = start_sess()
     results = sess.query(getattr(table_dict[table],column)).all()
     sess.close()
-    return list(zip(*results))[0]
+    return list(zip(*results))[0] if results == None else []
 
-print(get_current())

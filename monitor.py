@@ -1,5 +1,5 @@
 from lxml import html
-from fbpage import page
+#from fbpage import page
 from flask import Flask, request
 import os
 import time
@@ -21,11 +21,13 @@ def get_current():
 
         # create a list of products:
         cur_products = set(tree.xpath('//div[@class="name"]/text()'))
-        old_prods = set(db.get_table("products","prod_name"))
-        if cur_products != old_prods:
+        old_prods = set(db.get_table("Products","prod_name"))
+        if old_prods == None:
+            db.insert_list("Products", "prod_name", cur_products)
+        elif cur_products != old_prods:
             diff = list(cur_products.difference(old_prods))
-            notify_all(diff)
-            db.insert_list("products", "prod_name", diff)
+#            notify_all(diff)
+            db.insert_list("Products", "prod_name", diff)
         time.sleep(seconds)
 
 if  __name__ == "__main__":
