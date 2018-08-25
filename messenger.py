@@ -27,11 +27,11 @@ def received_postback(event):
     page.typing_on(sender_id)
 
     if(payload == "Subscribe"):
-        db.insert_list("users","fb_id",[sender_id])
+        db.insert_user("fb_id",sender_id)
         page.send(sender_id, "Subbed to all products.")
     
     elif(payload == "Current Products"):
-        page.send(event.sender_id, "\n".join(db.get_table("products", "prod_name")))
+        page.send(event.sender_id, "\n".join(db.get_current()))
     
     elif(payload == "Unsubscribe"):
         db.delete_row("users", "fb_id", sender_id)
@@ -45,7 +45,7 @@ def received_postback(event):
 @page.handle_message
 def message_handler(event): 
     # get whatever message a user sent the bot
-    page.send(event.sender_id, "\n".join(db.get_table("products", "prod_name")))
+    page.send(event.sender_id, "\n".join(db.get_table("Products", "prod_name")))
     return "Message Processed"
 
 @page.handle_delivery
