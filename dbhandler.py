@@ -175,13 +175,3 @@ def delete_sub(fb_id, prod_name):
     sess.close()
 
     return True
-
-sess = start_sess()
-# item = ["fdjsl"]
-# print(new_items(item))
-# insert_products(item)
-# insert_current(item)
-
-# print(get_current())
-print(user_exists("12334523", sess))
-sess.close()
