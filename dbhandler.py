@@ -96,7 +96,7 @@ def insert_products(vlist):
 
     return prods
 
-def insert_users(value):
+def insert_user(value):
     sess = start_sess()
     products = get_object(Products)
     
