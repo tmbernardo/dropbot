@@ -1,5 +1,3 @@
-verify-token.txt
-access-token.txt
-database
-database/
+dburl.py
+*.txt
 *.pyc
