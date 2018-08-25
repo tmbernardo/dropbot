@@ -9,7 +9,7 @@ import dbhandler as db
 seconds = 15
 
 def notify_all(new):
-    for user in db.get_table("users", "fb_id"):
+    for user in db.get_table("Users", "fb_id"):
         page.send(user, "\n".join(new))
     print("All users notified")
 

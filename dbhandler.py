@@ -146,7 +146,7 @@ def get_object(table):
 
 def get_table(table, column):
     sess = start_sess()
-    results = sess.query(getattr(table_dict[table],column))
+    results = sess.query(getattr(table_dict[table],column)).all()
     sess.close()
     return [] if len(results)==0 else list(zip(*results))[0]
 
