@@ -53,11 +53,20 @@ def create_tables():
     sess.commit()
     sess.close()
 
-def user_exists():
-    pass
+def user_exists(user, sess):
+    return sess.query(sql.exists().where(Users.fb_id==user)).scalar()
 
-def prod_exists():
-    pass
+def prod_exists(prod, sess):
+    return sess.query(sql.exists().where(Products.prod_name==prod)).scalar()
+
+def new_items(vlist):
+    new = []
+    sess = start_sess()
+    for v in vlist:
+        if not prod_exists(v,sess):
+            new.append(v)
+    sess.close()
+    return new
 
 def insert_products(vlist):
     sess = start_sess()
@@ -75,29 +84,43 @@ def insert_products(vlist):
 
     return prods
 
-def insert_users(vlist):
+def insert_users(value):
     sess = start_sess()
-    users = []
     products = get_object(Products)
     
-    for v in vlist:
-        user = Users(fb_id=v)
-        user.subscriptions.extend(products)
-        users.append(user)
+    user = Users(fb_id=value)
+    user.subscriptions.extend(products)
     
-    sess.add_all(users)
+    sess.add(user)
     sess.commit()
     sess.close()
+    return True
 
 def insert_current(vlist):
     sess = start_sess()
-
+    prods = []
+    
+    for v in vlist:
+        prod = get_product(v)
+        curr = Current()
+        curr.product = prod
+        prods.append(curr)
+    sess.add_all(prods)
+    sess.commit()
     sess.close()
+
+def get_subscribers(prod):
+    sess = start_sess()
+    p = sess.query(Products).filter(Products.prod_name==prod).first()
+    return p.subscribers
 
 def get_current():
     sess = start_sess()
-    current = sess.query(Products.name).join(Current).all()
+    current = sess.query(Products.prod_name).join(Current).all()
     return list(zip(*results))[0]
+
+def get_product(prod, sess):
+    return sess.query(Products).filter(Products.prod_name==prod).first()
 
 def get_object(table):
     sess = start_sess()
@@ -107,7 +130,7 @@ def get_object(table):
 
 def get_table(table, column):
     sess = start_sess()
-    results = sess.query(getattr(table_dict[table],column)).all()
+    results = sess.query(getattr(table_dict[table],column))
     sess.close()
     return  [] if len(results)==0 else list(zip(*results))[0]
 
@@ -123,4 +146,21 @@ def delete_user(fb_id):
     sess.close()
 
 def delete_sub(fb_id, prod_name):
-    pass
+    sess = start_sess()
+
+    if not prod_exists(prod_name, sess):
+        sess.close()
+        return False
+    
+    user = sess.query(Users).filter(Users.fb_id==fb_id).first()
+    prod = get_product(prod_name, sess)
+    user.subscriptions.remove(prod)
+    sess.commit()
+    sess.close()
+
+    return True
+
+#sess = start_sess()
+#insert_users(['12334523','1235134651','12351345'])
+#delete_sub('12334523','J66-GTV')
+#sess.close()
