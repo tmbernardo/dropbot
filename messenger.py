@@ -27,7 +27,7 @@ def received_postback(event):
     page.typing_on(sender_id)
 
     if(payload == "Subscribe"):
-        db.insert_user("fb_id",sender_id)
+        db.insert_user(sender_id)
         page.send(sender_id, "Subbed to all products.")
     
     elif(payload == "Current Products"):
