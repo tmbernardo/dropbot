@@ -35,7 +35,8 @@ def get_current():
             db.insert_products(new)
         if restock:
             for product in restock.keys():
-                page.send(sub.fb_id, re.prod_name)
+                for sub in restock[product]:
+                    page.send(sub, product)
 
         db.insert_current(products)
 
