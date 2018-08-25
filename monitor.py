@@ -1,5 +1,5 @@
 from lxml import html
-#from fbpage import page
+from fbpage import page
 from flask import Flask, request
 import os
 import time
@@ -16,8 +16,8 @@ def notify_all(new):
 def get_current():
     while(True):
         print("Checking if new products are on ACRNM")
-        page = requests.get('http://acrnm.com')
-        tree = html.fromstring(page.content)
+        site = requests.get('http://acrnm.com')
+        tree = html.fromstring(site.content)
 
         # create a list of products:
         products = set(tree.xpath('//div[@class="name"]/text()'))
