@@ -34,11 +34,10 @@ def get_current():
             notify_all(new)
             db.insert_products(new)
         if restock:
-            for re in restock:
-                for sub in re.subscribers.all():
-                    page.send(sub.fb_id, re.prod_name)
+            for product in restock.keys():
+                page.send(sub.fb_id, re.prod_name)
 
-        db.insert_current(new)
+        db.insert_current(products)
 
         time.sleep(seconds)
 
