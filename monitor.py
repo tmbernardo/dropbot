@@ -8,9 +8,9 @@ import dbhandler as db
 
 seconds = 15
 
-def notify_all(diff):
+def notify_all(new):
     for user in db.get_table("users", "fb_id"):
-        page.send(user, "\n".join(diff))
+        page.send(user, "\n".join(new))
     print("All users notified")
 
 def get_current():
@@ -20,15 +20,26 @@ def get_current():
         tree = html.fromstring(page.content)
 
         # create a list of products:
-        cur_products = set(tree.xpath('//div[@class="name"]/text()'))
-        old_prods = set(db.get_table("Products","prod_name"))
+        products = set(tree.xpath('//div[@class="name"]/text()'))
+#         old_prods = set(db.get_table("Products","prod_name"))
         
-        if len(old_prods)<1:
-            db.insert_products(cur_products)
-        elif cur_products != old_prods:
-            diff = list(cur_products.difference(old_prods))
-#            notify_all(diff)
-            db.insert_products(diff)
+#         if len(old_prods)<1:
+#             db.insert_products(products)
+#         elif products != old_prods:
+#             diff = list(products.difference(old_prods))
+# #            notify_all(diff)
+#             db.insert_products(diff)
+        new, restock = db.new_items(products)
+        if new:
+            notify_all(new)
+            db.insert_products(new)
+        if restock:
+            for re in restock:
+                for sub in re.subscribers.all():
+                    page.send(sub.fb_id, re.prod_name)
+
+        db.insert_current(new)
+
         time.sleep(seconds)
 
 if  __name__ == "__main__":

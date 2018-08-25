@@ -9,6 +9,7 @@ import sqlalchemy as sql
 
 Base = declarative_base()
 
+#heroku pg:psql -a acrbot
 #url = os.environ['DATABASE_URL']
 url="postgres://bjihtaefdfdzxn:5d519eff130605f764b523746a4b919e9f1b521c794a1c013f55375ce01a4463@ec2-50-16-196-138.compute-1.amazonaws.com:5432/d8k7t1e86358jk"
 engine = sql.create_engine(url, pool_size=17, client_encoding='utf8')
@@ -33,7 +34,7 @@ class Subs(Base):
 class Current(Base):
     __tablename__ = "current"
     id = Column(Integer, primary_key=True)
-    prod_id = Column(Integer, ForeignKey('products.id'), primary_key=True)
+    prod_id = Column(Integer, ForeignKey('products.id'))
     product = relationship('Products', uselist=False)
 
 table_dict = {
@@ -54,19 +55,30 @@ def create_tables():
     sess.close()
 
 def user_exists(user, sess):
-    return sess.query(sql.exists().where(Users.fb_id==user)).scalar()
+    return sess.query(Users).filter(Users.fb_id==user).scalar()
 
 def prod_exists(prod, sess):
-    return sess.query(sql.exists().where(Products.prod_name==prod)).scalar()
+    return sess.query(Products).filter(Products.prod_name==prod).scalar()
+
+def current_exists(prod_name, sess):
+    # return sess.query(sql.exists().where(Current.prod_==user)).scalar()
+    return sess.query(Current).filter(Current.product.has(Products.prod_name==prod_name)).scalar()
 
 def new_items(vlist):
     new = []
+    restock = []
     sess = start_sess()
+
     for v in vlist:
-        if not prod_exists(v,sess):
+        prod = prod_exists(v,sess)
+        cur = current_exists(v,sess)
+        if not prod:
             new.append(v)
+        if prod and (not cur):
+            restock.append(prod)
+
     sess.close()
-    return new
+    return new, restock
 
 def insert_products(vlist):
     sess = start_sess()
@@ -101,10 +113,11 @@ def insert_current(vlist):
     prods = []
     
     for v in vlist:
-        prod = get_product(v)
+        prod = get_product(v, sess)
         curr = Current()
         curr.product = prod
         prods.append(curr)
+
     sess.add_all(prods)
     sess.commit()
     sess.close()
@@ -112,12 +125,15 @@ def insert_current(vlist):
 def get_subscribers(prod):
     sess = start_sess()
     p = sess.query(Products).filter(Products.prod_name==prod).first()
-    return p.subscribers
+    rv = p.subscribers.all()
+    sess.close()
+    return rv
 
 def get_current():
     sess = start_sess()
     current = sess.query(Products.prod_name).join(Current).all()
-    return list(zip(*results))[0]
+    sess.close()
+    return list(zip(*current))[0]
 
 def get_product(prod, sess):
     return sess.query(Products).filter(Products.prod_name==prod).first()
@@ -132,7 +148,7 @@ def get_table(table, column):
     sess = start_sess()
     results = sess.query(getattr(table_dict[table],column))
     sess.close()
-    return  [] if len(results)==0 else list(zip(*results))[0]
+    return [] if len(results)==0 else list(zip(*results))[0]
 
 def delete_user(fb_id):
     """ delete entry and associations by fb_id
@@ -160,7 +176,12 @@ def delete_sub(fb_id, prod_name):
 
     return True
 
-#sess = start_sess()
-#insert_users(['12334523','1235134651','12351345'])
-#delete_sub('12334523','J66-GTV')
-#sess.close()
+sess = start_sess()
+# item = ["fdjsl"]
+# print(new_items(item))
+# insert_products(item)
+# insert_current(item)
+
+# print(get_current())
+print(user_exists("12334523", sess))
+sess.close()
