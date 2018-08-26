@@ -27,9 +27,8 @@ def get_current():
             notify_all(new)
             db.insert_products(new)
         if restock:
-            for product in restock.keys():
-                for sub in restock[product]:
-                    page.send(sub, "RESTOCK: "+product)
+            for sub in restock.keys():
+                page.send(sub, "RESTOCK:\n"+"\n".join(restock[sub]))
         if new or restock:
             db.insert_current(products)
 

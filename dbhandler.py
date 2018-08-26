@@ -75,7 +75,8 @@ def new_items(vlist):
         if not prod:
             new.append(v)
         if prod and (not cur):
-            restock[v] = [sub.fb_id for sub in prod.subscribers]
+            for sub in prod.subscribers:
+                restock.setdefault(sub.fb_id, []).append(v)
 
     sess.close()
     return new, restock
