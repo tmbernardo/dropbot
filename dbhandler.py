@@ -18,6 +18,7 @@ class Users(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     fb_id = Column(BigInteger, nullable=False, unique=True)
+    state = Column(Integer, nullable=False, default=0)
     subscriptions = relationship('Products', secondary='subscriptions', backref=sql.orm.backref('subscribers', lazy='dynamic'))
 
 class Products(Base):
@@ -33,8 +34,7 @@ class Subs(Base):
 
 class Current(Base):
     __tablename__ = "current"
-    id = Column(Integer, primary_key=True)
-    prod_id = Column(Integer, ForeignKey('products.id'))
+    prod_id = Column(Integer, ForeignKey('products.id'), primary_key=True)
     product = relationship('Products', uselist=False)
 
 table_dict = {
@@ -61,7 +61,6 @@ def prod_exists(prod, sess):
     return sess.query(Products).filter(Products.prod_name==prod).scalar()
 
 def current_exists(prod_name, sess):
-    # return sess.query(sql.exists().where(Current.prod_==user)).scalar()
     return sess.query(Current).filter(Current.product.has(Products.prod_name==prod_name)).scalar()
 
 def new_items(vlist):

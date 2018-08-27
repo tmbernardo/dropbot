@@ -8,10 +8,14 @@ import dbhandler as db
 
 seconds = 15
 
-def notify_all(new):
-    for user in db.get_table("Users", "fb_id"):
-        page.send(user, "NEW ITEMS\n"+"\n".join(new))
-    print("All users notified")
+def notify(new, restock):
+    if new:
+        for user in db.get_table("Users", "fb_id"):
+            page.send(user, "NEW ITEMS\n"+"\n".join(new))
+        print("Notified all users")
+    
+    for sub in restock.keys():
+        page.send(sub, "RESTOCK:\n"+"\n".join(restock[sub]))
 
 def get_current():
     while(True):
@@ -20,15 +24,13 @@ def get_current():
         tree = html.fromstring(site.content)
 
         # create a list of products from the website
-        products = set(tree.xpath('//div[@class="name"]/text()'))
+        products = tree.xpath('//div[@class="name"]/text()')
         new, restock = db.new_items(products)
         
+        notify(new, restock)
+        
         if new:
-            notify_all(new)
             db.insert_products(new)
-        if restock:
-            for sub in restock.keys():
-                page.send(sub, "RESTOCK:\n"+"\n".join(restock[sub]))
         if new or restock:
             db.insert_current(products)
 

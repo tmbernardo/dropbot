@@ -1,3 +1,5 @@
 dburl.py
 *.txt
+!runtime.txt
+!requirements.txt
 *.pyc
