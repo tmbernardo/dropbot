@@ -25,6 +25,9 @@ class Products(Base):
     __tablename__ = "products"
     id = Column(Integer, primary_key=True)
     prod_name = Column(String, nullable=False, unique=True)
+    
+    def __eq__(self, other):
+        return self.prod_name == other.prod_name
 
 class Subs(Base):
     __tablename__ = "subscriptions"
