@@ -24,6 +24,7 @@ def get_current():
         print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
         site.get()
         tree = html.fromstring(str(site))
+#        products = tree.xpath('//div[@class="name"]/text()')
         products = tree.xpath('//div[@class="name"]/text()')
 
         new, restock = db.new_items(products)

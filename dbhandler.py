@@ -101,6 +101,11 @@ def insert_products(vlist):
 
 def insert_user(value):
     sess = start_sess()
+    
+    if user_exists(value, sess):
+        sess.close
+        return False
+    
     products = get_object(Products, sess)
     
     user = Users(fb_id=value)
