@@ -88,7 +88,7 @@ def received_message_read(event):
 
 @page.callback(['Subs'])
 def callback_clicked_subs(payload, event):
-    page.send(event.sender_id, "YOUR SUBS:\n"+"\n".join(db.get_subscriptions(sender_id)))
+    page.send(event.sender_id, "YOUR SUBS:\n"+"\n".join(db.get_subscriptions(event.sender_id)))
 
 @page.callback(['Products'])
 def callback_clicked_prods(payload, event):
