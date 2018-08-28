@@ -19,8 +19,8 @@ buttons = [
 ]
 
 quick_replies = [
-        "Yes, resubscribe",
-        "No"
+        QuickReply(title="Yes, resubscribe", payload="Yes_r"),
+        QuickReply(title="No", payload="No")        
 ]
 
 def show_persistent_menu():
@@ -106,7 +106,7 @@ def callback_clicked_rem(payload, event):
     db.change_state(sender_id, 1)
     page.send(sender_id, "Insert product name. Make sure name is exact (Press 'Current Products' to see product list)")
 
-@page.callback(['Yes, resubscribe'])
+@page.callback(['Yes_r'])
 def callback_clicked_yes_r(payload, event):
     sender_id = event.sender_id
     db.insert_user(sender_id)
