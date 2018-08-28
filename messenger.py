@@ -41,7 +41,7 @@ def received_postback(event):
         page.send(event.sender_id, "CURRENT PRODUCTS:\n"+"\n".join(db.get_current()))
     
     elif(payload == "Unsubscribe"):
-        db.delete_row("users", "fb_id", sender_id)
+        db.delete_user(sender_id)
         page.send(sender_id, "Unsubbed. You may now delete the conversation.")
 
     elif(payload == "Remove notification"):
