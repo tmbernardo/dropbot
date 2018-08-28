@@ -63,11 +63,11 @@ def message_handler(event):
         page.send(sender_id, "CURRENT PRODUCTS:\n"+"\n".join(db.get_current()))
     else:
         product = event.message['text']
-       # deleted = db.delete_sub(sender_id, product)
-       # if(deleted):
-       #     page.send(sender_id, "Deleted your item")
-       # else:
-       #     page.send(sender_id, "Item not found (product name must be exact)")
+        deleted = db.delete_sub(sender_id, product)
+        if(deleted):
+            page.send(sender_id, "Deleted your item")
+        else:
+            page.send(sender_id, "Item not found (product name not exact or you are already unsubscribed to this product)")
         db.change_state(sender_id, 0)
 
     return "Message processed"
