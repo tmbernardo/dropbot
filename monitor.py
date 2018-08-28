@@ -21,7 +21,7 @@ def get_current():
     site = pr.ProxyRequests("https://acrnm.com")
 
     while(True):
-        print("Checking if new products are on ACRNM")
+        print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
         site.get()
         tree = html.fromstring(str(site))
         products = tree.xpath('//div[@class="name"]/text()')
@@ -33,6 +33,8 @@ def get_current():
             db.insert_products(new)
         if new or restock:
             db.insert_current(products)
+        
+        time.sleep(1)
 
 if  __name__ == "__main__":
     db.create_tables()
