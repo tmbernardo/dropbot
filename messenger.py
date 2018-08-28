@@ -38,7 +38,7 @@ def received_postback(event):
         db.insert_user(sender_id)
         page.send(sender_id, "Subbed to all products")
         page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
-        page.send(sender_id, Template.Buttons("----", [button for button in sub_btn]))
+        page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
 
     page.typing_off(sender_id)
     
@@ -57,7 +57,7 @@ def message_handler(event):
             page.send(sender_id, "Unsubbed, you may now delete the conversation")
         else:
             page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
-            page.send(sender_id, Template.Buttons("--------------------", [button for button in sub_btn]))
+            page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
     elif(state == 1):
         deleted = db.delete_sub(sender_id, message)
         if(deleted):
