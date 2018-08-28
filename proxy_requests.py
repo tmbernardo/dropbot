@@ -5,7 +5,6 @@ import json
 from requests.auth import HTTPBasicAuth
 from lxml import html
 
-
 class ProxyRequests:
     def __init__(self, url):
         self.sockets = []
@@ -38,7 +37,7 @@ class ProxyRequests:
                 self.status_code = request.status_code
                 self.proxy_used = current_socket
             except:
-                print('working...')
+                # print('working...')
                 self.get()
 
     # recursively try proxy sockets until successful POST
@@ -53,7 +52,7 @@ class ProxyRequests:
                 self.status_code = request.status_code
                 self.proxy_used = current_socket
             except:
-                print('working...')
+                # print('working...')
                 self.post(data)
 
     # recursively try proxy sockets until successful POST with headers
@@ -72,7 +71,7 @@ class ProxyRequests:
                 self.status_code = request.status_code
                 self.proxy_used = current_socket
             except:
-                print('working...')
+                # print('working...')
                 self.post_with_headers(data)
 
     # recursively try proxy sockets until successful POST with file
@@ -90,7 +89,7 @@ class ProxyRequests:
                 self.status_code = request.status_code
                 self.proxy_used = current_socket
             except:
-                print('working...')
+                # print('working...')
                 self.post_file()
 
     # not intended for string or html... a string may work but should be for a json dict response
@@ -136,7 +135,7 @@ class ProxyRequestsBasicAuth(ProxyRequests):
                 self.status_code = request.status_code
                 self.proxy_used = current_socket
             except:
-                print('working...')
+                # print('working...')
                 self.get()
 
     # recursively try proxy sockets until successful POST (overrided method)
@@ -155,7 +154,7 @@ class ProxyRequestsBasicAuth(ProxyRequests):
                 self.status_code = request.status_code
                 self.proxy_used = current_socket
             except:
-                print('working...')
+                # print('working...')
                 self.post(data)
 
     # recursively try proxy sockets until successful POST with headers (overrided method)
@@ -175,7 +174,7 @@ class ProxyRequestsBasicAuth(ProxyRequests):
                 self.status_code = request.status_code
                 self.proxy_used = current_socket
             except:
-                print('working...')
+                # print('working...')
                 self.post_with_headers(data)
 
     # recursively try proxy sockets until successful POST with file
@@ -194,58 +193,8 @@ class ProxyRequestsBasicAuth(ProxyRequests):
                 self.status_code = request.status_code
                 self.proxy_used = current_socket
             except:
-                print('working...')
+                # print('working...')
                 self.post_file()
 
     def __str__(self):
         return str(self.request)
-
-if __name__ == "__main__":
-    # ###### example GET ###### #
-    r = ProxyRequests("https://acrnm.com")
-    r.get()
-    tree = html.fromstring(str(r))
-    products = tree.xpath('//div[@class="name"]/text()')
-    print(products)
-    #
-    # ###### example POST ###### #
-    # r = ProxyRequests("https://postman-echo.com/post")
-    # r.post({"key1": "value1", "key2": "value2"})
-    #
-    # ###### example POST with headers: ###### #
-    # r = ProxyRequests("http://ptsv2.com/t/l4h0y-1533772770/post")
-    # r.set_headers({"name": "rootVIII", "secret_message": "7Yufs9KIfj33d"})
-    # r.post_with_headers({"key1": "value1", "key2": "value2"})
-    #
-    # ###### example POST file ###### #
-    # r = ProxyRequests("http://ptsv2.com/t/l4h0y-1533772770/post")
-    # r.set_file({'file': open('test.txt', 'rb')})
-    # r.post_file()
-    #
-    # ###### example GET with Basic Authentication: ###### #
-    # r = ProxyRequestsBasicAuth("https://postman-echo.com/basic-auth/", "postman", "password")
-    # r.get()
-    #
-    # ###### example POST with Basic Authentication ###### #
-    # r = ProxyRequestsBasicAuth("http://ptsv2.com/t/n25v8-1533857107/post", "username", "password")
-    # r.post({"key1": "value1", "key2": "value2"})
-
-    # ###### example POST with headers and  Basic Authentication ###### #
-    # r = ProxyRequestsBasicAuth("http://ptsv2.com/t/l4h0y-1533772770/post", "username", "password")
-    # r.set_headers({"name": "rootVIII", "secret_message": "7Yufs9KIfj33d"})
-    # r.post_with_headers({"key1": "value1", "key2": "value2"})
-    #
-    # ###### example POST file with Basic Authentication ###### #
-    # r = ProxyRequestsBasicAuth("http://ptsv2.com/t/l4h0y-1533772770/post", "username", "password")
-    # r.set_file({'file': open('test.txt', 'rb')})
-    # r.post_file()
-    print('\n')
-    # print(r)
-    print('\n')
-    print(r.get_headers())
-    print('\n')
-    print(r.get_status_code())
-    print('\n')
-    # print(r.to_json())
-    print('\n')
-    print(r.get_proxy_used())

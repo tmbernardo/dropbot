@@ -7,8 +7,6 @@ import requests
 import dbhandler as db
 import proxy_requests as pr
 
-seconds = 15
-
 def notify(new, restock):
     if new:
         for user in db.get_table("Users", "fb_id"):
