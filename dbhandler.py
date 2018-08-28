@@ -1,7 +1,7 @@
 #!/usr/bin/python
-from sqlalchemy import Table, Column, Integer, BigInteger, String, ForeignKey, Sequence
-from sqlalchemy.orm import joinedload, relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import joinedload, relationship, sessionmaker
+from sqlalchemy import Table, Column, Integer, BigInteger, String, ForeignKey, Sequence
 
 import os
 import psycopg2
@@ -45,7 +45,7 @@ table_dict = {
         "Products": Products,
         "Subscriptions": Subs,
         "Current": Current
-        }
+}
 
 def start_sess():
     Session = sessionmaker(bind=engine, autocommit=False)
@@ -128,25 +128,19 @@ def insert_current(vlist):
     sess.close()
 
 """ Private getters """
-def get_subscribers(prod, sess):
+def get_object(table, sess=start_sess()):
+    results = sess.query(table).all()
+    return results
+
+def get_product(prod, sess=start_sess()):
+    return sess.query(Products).filter(Products.prod_name==prod).first()
+
+def get_subscribers(prod, sess=start_sess()):
     p = sess.query(Products).filter(Products==prod).first()
     rv = p.subscribers.all()
     return rv
 
-def get_product(prod, sess):
-    return sess.query(Products).filter(Products.prod_name==prod).first()
-
-def get_object(table, sess):
-    results = sess.query(table).all()
-    return results
-
 """ Public getters """
-def get_current():
-    sess = start_sess()
-    current = sess.query(Products.prod_name).join(Current).all()
-    sess.close()
-    return list(zip(*current))[0]
-
 def get_table(table, column):
     sess = start_sess()
     results = sess.query(getattr(table_dict[table],column)).all()
@@ -157,6 +151,19 @@ def get_state(fb_id):
     sess = start_sess()
     user = sess.query(Users).filter(Users.fb_id==fb_id).first() 
     rv = user.id
+    sess.close()
+    return rv
+
+def get_current():
+    sess = start_sess()
+    current = sess.query(Products.prod_name).join(Current).all()
+    sess.close()
+    return list(zip(*current))[0]
+
+def get_subscriptions(fb_id):
+    sess = start_sess()
+    user = sess.query(Users).filter(Users.fb_id==fb_id).first() 
+    rv = [prod.prod_name for prod in user.subscriptions]
     sess.close()
     return rv
 
@@ -192,9 +199,6 @@ def delete_sub(fb_id, prod_name):
         return False
 
     user = sess.query(Users).filter(Users.fb_id==fb_id).first()
-    if prod not in user.subscriptions:
-        sess.close()
-        return False
     user.subscriptions.remove(prod)
     sess.commit()
     sess.close()

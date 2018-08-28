@@ -7,14 +7,10 @@ page.greeting("Click Get Started below to subscribe!!")
 page.show_starting_button("Subscribe")
 
 pers_menu_btns = [
+        "My Subscriptions",
         "Current Products",
-        "Remove notification",
+        "Remove Notification",
         "Unsubscribe"
-]
-
-quick_replies = [
-        QuickReply(title="Yes", payload="Yes"),
-        QuickReply(title="No", payload="No")
 ]
 
 def show_persistent_menu():
@@ -28,7 +24,6 @@ def received_postback(event):
     sender_id = event.sender_id
     recipient_id = event.recipient_id
     time_of_postback = event.timestamp
-
     payload = event.payload
 
     page.typing_on(sender_id)
@@ -36,18 +31,21 @@ def received_postback(event):
     if(payload == "Subscribe"):
         db.insert_user(sender_id)
         page.send(sender_id, "Subbed to all products")
+
+    elif(payload == "My Subscriptions"):
+        page.send(sender_id, "YOUR SUBS:\n"+"\n".join(db.get_subscriptions(sender_id)))
     
     elif(payload == "Current Products"):
-        page.send(event.sender_id, "CURRENT PRODUCTS:\n"+"\n".join(db.get_current()))
+        page.send(sender_id, "CURRENT PRODUCTS:\n"+"\n".join(db.get_current()))
+
+    elif(payload == "Remove Notification"):
+        sender_id = event.sender_id
+        db.change_state(sender_id, 1)
+        page.send(sender_id, "Insert product name. Make sure name is exact (Press 'Current Products' to see product list)")
     
     elif(payload == "Unsubscribe"):
         db.delete_user(sender_id)
         page.send(sender_id, "Unsubbed. You may now delete the conversation.")
-
-    elif(payload == "Remove notification"):
-        sender_id = event.sender_id
-        db.change_state(sender_id, 1)
-        page.send(sender_id, "Insert product name. Make sure name is exact (Press 'Current Products' to see product list)")
 
     page.typing_off(sender_id)
     
