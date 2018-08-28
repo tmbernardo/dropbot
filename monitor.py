@@ -12,14 +12,14 @@ def notify(new, restock):
     if new:
         for user in db.get_table("Users", "fb_id"):
             page.send(user, "NEW ITEMS\n"+"\n".join(new))
-        # print("Notified all users")
+        print("Notified all users")
     
     for sub in restock.keys():
         page.send(sub, "RESTOCK:\n"+"\n".join(restock[sub]))
 
 def get_current():
     while(True):
-        # print("Checking if new products are on ACRNM")
+        print("Checking if new products are on ACRNM")
         site = pr.ProxyRequests("https://acrnm.com")
         site.get()
         tree = html.fromstring(str(site))

@@ -38,7 +38,7 @@ class ProxyRequests:
                 self.status_code = request.status_code
                 self.proxy_used = current_socket
             except:
-                # print('working...')
+                print('working...')
                 self.get()
 
     # recursively try proxy sockets until successful POST
