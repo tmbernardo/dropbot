@@ -27,6 +27,9 @@ def show_persistent_menu():
     page.show_persistent_menu([Template.ButtonPostBack(btn, btn) for btn in pers_menu_btns])
     return "Done with persistent menu section"
 
+def handle_unsub(sender_id):
+    page.send(sender_id, "You are unsubscribed, do you want to resubscribe?", quick_replies=quick_replies)
+
 @page.handle_postback
 def received_postback(event):
     show_persistent_menu()
@@ -70,7 +73,7 @@ def message_handler(event):
             page.send(sender_id, "Item not found (product name not exact or you are already unsubscribed to this product)")
         db.change_state(sender_id, 0)
     else:
-        page.send(sender_id, "You are unsubscribed, do you want to resubscribe?", quick_replies=quick_replies)
+        handle_unsub(sender_id)
 
     return "Message processed"
 
@@ -94,7 +97,12 @@ def received_message_read(event):
 
 @page.callback(['Subs'])
 def callback_clicked_subs(payload, event):
-    page.send(event.sender_id, "YOUR SUBS:\n"+"\n".join(db.get_subscriptions(event.sender_id)))
+    sender_id = event.sender_id
+    subs = db.get_subscriptions(sender_id)
+    if subs:
+        page.send(sender_id, "YOUR SUBS:\n"+"\n".join(subs))
+    else:
+        handle_unsub(sender_id)
 
 @page.callback(['Products'])
 def callback_clicked_prods(payload, event):
@@ -103,8 +111,10 @@ def callback_clicked_prods(payload, event):
 @page.callback(['Remove'])
 def callback_clicked_rem(payload, event):
     sender_id = event.sender_id
-    db.change_state(sender_id, 1)
-    page.send(sender_id, "Insert product name. Make sure name is exact (Press 'Current Products' to see product list)")
+    if db.change_state(sender_id, 1):
+        page.send(sender_id, "Insert product name. Make sure name is exact (Press 'Current Products' to see product list)")
+    else:
+        handle_unsub(sender_id)
 
 @page.callback(['Yes_r'])
 def callback_clicked_yes_r(payload, event):

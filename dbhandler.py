@@ -166,9 +166,14 @@ def get_current():
 def get_subscriptions(fb_id):
     sess = start_sess()
     user = user_exists(fb_id, sess)
-    rv = [prod.prod_name for prod in user.subscriptions]
+
+    if user:
+        rv = [prod.prod_name for prod in user.subscriptions]
+        sess.close()
+        return rv
+        
     sess.close()
-    return rv
+    return None
 
 def delete_user(fb_id):
     """ delete entry and associations by fb_id
@@ -176,10 +181,16 @@ def delete_user(fb_id):
     """
     sess = start_sess()
     user = user_exists(fb_id, sess)
-    user.subscriptions.clear()
-    sess.delete(user)
-    sess.commit()
+
+    if user:
+        user.subscriptions.clear()
+        sess.delete(user)
+        sess.commit()
+        sess.close()
+        return True
+
     sess.close()
+    return False
 
 def change_state(fb_id, state):
     sess = start_sess()
