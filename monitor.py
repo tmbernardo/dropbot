@@ -1,5 +1,5 @@
 from lxml import html
-#from fbpage import page
+from fbpage import page
 from flask import Flask, request
 
 import os
