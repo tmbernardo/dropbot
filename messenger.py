@@ -62,7 +62,7 @@ def message_handler(event):
         # get whatever message a user sent the bot
         page.send(sender_id, "CURRENT PRODUCTS:\n"+"\n".join(db.get_current()))
     else:
-        product = event.payload
+        product = event.message_text
         deleted = db.delete_sub(sender_id, product)
         if(deleted):
             page.send(sender_id, "Deleted your item.")
