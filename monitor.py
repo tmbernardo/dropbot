@@ -18,9 +18,10 @@ def notify(new, restock):
         page.send(sub, "RESTOCK:\n"+"\n".join(restock[sub]))
 
 def get_current():
+    site = pr.ProxyRequests("https://acrnm.com")
+
     while(True):
         print("Checking if new products are on ACRNM")
-        site = pr.ProxyRequests("https://acrnm.com")
         site.get()
         tree = html.fromstring(str(site))
         products = tree.xpath('//div[@class="name"]/text()')
