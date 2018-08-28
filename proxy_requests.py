@@ -25,21 +25,26 @@ class ProxyRequests:
         revised_list = [m1.replace("<td>", "") for m1 in matches]
         for socket_str in revised_list:
             self.sockets.append(socket_str[:-5].replace("</td>", ":"))
+        self.proxy_used = self.sockets.pop(0)
 
     # recursively try proxy sockets until successful GET
     def get(self):
         if len(self.sockets) > 0:
-            current_socket = self.sockets.pop(0)
+            current_socket = self.proxy_used
             proxies = {"http": "http://" + current_socket, "https": "https://" + current_socket}
             try:
                 request = requests.get(self.url, timeout=3.0, proxies=proxies)
                 self.request = request.text
                 self.headers = request.headers
                 self.status_code = request.status_code
-                self.proxy_used = current_socket
-            except:
-                print('working...')
+            except Exception as e:
+                print(e)
+#                print('working...')
+                self.proxy_used = self.sockets.pop(0)
                 self.get()
+        else:
+            print("Acquiring new sockets")
+            self.__acquire_sockets()
 
     # recursively try proxy sockets until successful POST
     def post(self, data):

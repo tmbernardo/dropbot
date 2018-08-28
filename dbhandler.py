@@ -10,7 +10,7 @@ import sqlalchemy as sql
 Base = declarative_base()
 
 # heroku pg:psql -a acrbot
-# import dburl
+import dburl
 url = os.environ['DATABASE_URL']
 engine = sql.create_engine(url, pool_size=17, client_encoding='utf8')
 
