@@ -194,7 +194,8 @@ def delete_sub(fb_id, prod_name):
     print(prod.prod_name)
 
     user = sess.query(Users).filter(Users.fb_id==fb_id).first()
-    print(user.subscriptions)
+    for x in user.subscriptions:
+        print(x.prod_name)
     user.subscriptions.remove(prod)
     sess.commit()
     sess.close()
