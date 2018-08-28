@@ -60,18 +60,25 @@ def received_postback(event):
 @page.handle_message
 def message_handler(event):
     sender_id = event.sender_id
+    message = event.message['text']
     state = db.get_state(sender_id)
+    
     if(state == 0):
         # get whatever message a user sent the bot
         page.send(sender_id, "CURRENT PRODUCTS:\n"+"\n".join(db.get_current()))
     elif(state == 1):
-        product = event.message['text']
-        deleted = db.delete_sub(sender_id, product)
+        deleted = db.delete_sub(sender_id, message)
         if(deleted):
             page.send(sender_id, "Deleted your item")
         else:
             page.send(sender_id, "Item not found (product name not exact or you are already unsubscribed to this product)")
         db.change_state(sender_id, 0)
+    
+    if(message.lower() == "unsubscribe"):
+        db.delete_user(sender_id)
+        page.send(sender_id, "Unsubbed, you may now delete the conversation")
+    elif(message.lower() == "commands"):
+        page.send(sender_id, Template.Buttons("User Commands", [button for button in buttons]))
 
     return "Message processed"
 
