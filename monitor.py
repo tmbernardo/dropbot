@@ -38,7 +38,8 @@ def get_current():
 
         if (time.time() - start_time)/60 > 1:
             print("Pinging the app")
-            os.system("ping https://acrbot.herokuapp.com/")
+            requests.get("https://acrbot.herokuapp.com/")
+            start_time = time.time()
         
 
 if  __name__ == "__main__":
