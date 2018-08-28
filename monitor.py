@@ -6,7 +6,7 @@ import os
 import time
 import requests
 import dbhandler as db
-import proxy_requests as pr
+from proxy_requests import ProxyRequests
 
 def notify(new, restock):
     if new:
@@ -18,21 +18,21 @@ def notify(new, restock):
         page.send(sub, "RESTOCK:\n"+"\n".join(restock[sub]))
 
 def get_current():
-    site = pr.ProxyRequests("https://acrnm.com")
+    site = ProxyRequests("https://acrnm.com")
 
     while(True):
         print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
         site.get()
-#        tree = html.fromstring(str(site))
-#        products = tree.xpath('//div[@class="name"]/text()')
-#
-#        new, restock = db.new_items(products)
-#        notify(new, restock)
-#        
-#        if new:
-#            db.insert_products(new)
-#        if new or restock:
-#            db.insert_current(products)
+        tree = html.fromstring(str(site))
+        products = tree.xpath('//div[@class="name"]/text()')
+
+        new, restock = db.new_items(products)
+        notify(new, restock)
+        
+        if new:
+            db.insert_products(new)
+        if new or restock:
+            db.insert_current(products)
         
         time.sleep(1)
 

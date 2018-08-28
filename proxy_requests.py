@@ -14,9 +14,9 @@ class ProxyRequests:
         self.request = ""
         self.headers = {}
         self.file_dict = {}
-        self.__acquire_sockets()
         self.status_code = ""
         self.proxy_used = ""
+        self.__acquire_sockets()
 
     # get a list of sockets from sslproxies.org
     def __acquire_sockets(self):
@@ -38,7 +38,7 @@ class ProxyRequests:
                 self.headers = request.headers
                 self.status_code = request.status_code
             except Exception as e:
-                print(e)
+#                print(e)
 #                print('working...')
                 self.proxy_used = self.sockets.pop(0)
                 self.get()
