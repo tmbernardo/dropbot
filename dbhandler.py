@@ -191,7 +191,7 @@ def delete_sub(fb_id, prod_name):
         sess.close()
         return False
 
-    print(prod)
+    print(prod.prod_name)
 
     user = sess.query(Users).filter(Users.fb_id==fb_id).first()
     print(user.subscriptions)
