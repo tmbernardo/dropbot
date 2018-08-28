@@ -64,7 +64,7 @@ def message_handler(event):
     else:
         product = event.message
         print(product)
-        #deleted = db.delete_sub(sender_id, product)
+        deleted = db.delete_sub(sender_id, product)
         if(deleted):
             page.send(sender_id, "Deleted your item")
         else:
