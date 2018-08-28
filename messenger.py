@@ -1,5 +1,5 @@
 from fbpage import page
-from fbmq import QuickReply, Template
+from fbmq import QuickReply, Template, Templates
 
 import os
 import dbhandler as db
