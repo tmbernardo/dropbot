@@ -22,6 +22,7 @@ def get_current():
 
     while(True):
         print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
+        print("Size of list of sockets: {}".format(len(site.sockets)))
         site.get()
         tree = html.fromstring(str(site))
         products = tree.xpath('//div[@class="name"]/text()')
