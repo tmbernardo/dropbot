@@ -1,5 +1,5 @@
 from fbpage import page
-from fbmq import QuickReply, Template, Templates
+from fbmq import QuickReply, Template
 
 import os
 import dbhandler as db
@@ -13,9 +13,9 @@ pers_menu_btns = [
 ]
 
 buttons = [
-        Templates.ButtonPostBack("My Subscriptions", "Subs"),
-        Templates.ButtonPostBack("Current Products", "Products"),
-        Templates.ButtonPostBack("Remove Notification", "Remove"),
+        Template.ButtonPostBack("My Subscriptions", "Subs"),
+        Template.ButtonPostBack("Current Products", "Products"),
+        Template.ButtonPostBack("Remove Notification", "Remove"),
 ]
 
 def show_persistent_menu():
@@ -38,7 +38,7 @@ def received_postback(event):
         page.send(sender_id, "Subbed to all products")
     
     elif(payload == "Commands"):
-        page.send(sender_id, Templates.Buttons("User Commands", [button for button in buttons]))
+        page.send(sender_id, Template.Buttons("User Commands", [button for button in buttons]))
 
     elif(payload == "Unsubscribe"):
         db.delete_user(sender_id)
