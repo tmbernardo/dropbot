@@ -1,8 +1,8 @@
-from flask import Flask, request
 from fbpage import page
+from flask import Flask, request
 
-import messenger
 import os
+import messenger
 
 app = Flask(__name__)
 
