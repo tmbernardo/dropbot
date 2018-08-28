@@ -182,12 +182,13 @@ def change_state(fb_id, state):
 def delete_sub(fb_id, prod_name):
     sess = start_sess()
 
-    if not prod_exists(prod_name, sess):
+    prod = prod_exists(prod_name, sess)
+    
+    if not prod:
         sess.close()
         return False
-    
+
     user = sess.query(Users).filter(Users.fb_id==fb_id).first()
-    prod = get_product(prod_name, sess)
     user.subscriptions.remove(prod)
     sess.commit()
     sess.close()
