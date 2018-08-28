@@ -7,10 +7,13 @@ import dbhandler as db
 page.greeting("Click Get Started below to subscribe!!")
 page.show_starting_button("Subscribe")
 
-buttons = [
+menu_buttons = [
         Template.ButtonPostBack("My Subscriptions", "Subs"),
         Template.ButtonPostBack("Current Products", "Products"),
         Template.ButtonPostBack("Remove Notification", "Remove"),
+]
+
+sub_btn = [
         Template.ButtonPostBack("Unsubscribe", "Unsub")
 ]
 
@@ -51,7 +54,8 @@ def message_handler(event):
             db.delete_user(sender_id)
             page.send(sender_id, "Unsubbed, you may now delete the conversation")
         else:
-            page.send(sender_id, Template.Buttons("Menu", [button for button in buttons]))
+            page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
+            page.send(sender_id, Template.Buttons("Menu", [button for button in sub_btn]))
     elif(state == 1):
         deleted = db.delete_sub(sender_id, message)
         if(deleted):
