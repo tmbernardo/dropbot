@@ -24,19 +24,16 @@ def get_current():
         site = pr.ProxyRequests("https://acrnm.com")
         site.get()
         tree = html.fromstring(str(site))
-
         # create a list of products from the website
         products = tree.xpath('//div[@class="name"]/text()')
+
         new, restock = db.new_items(products)
-        
         notify(new, restock)
         
         if new:
             db.insert_products(new)
         if new or restock:
             db.insert_current(products)
-
-        time.sleep(seconds)
 
 if  __name__ == "__main__":
     db.create_tables()
