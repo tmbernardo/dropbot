@@ -35,7 +35,7 @@ def received_postback(event):
 
     if(payload == "Subscribe"):
         db.insert_user(sender_id)
-        page.send(sender_id, "Subbed to all products.")
+        page.send(sender_id, "Subbed to all products")
     
     elif(payload == "Current Products"):
         page.send(event.sender_id, "CURRENT PRODUCTS:\n"+"\n".join(db.get_current()))
@@ -47,7 +47,7 @@ def received_postback(event):
     elif(payload == "Remove notification"):
         sender_id = event.sender_id
         db.change_state(sender_id, 1)
-        page.send(sender_id, "Insert product name. Make sure name is exact, then send it back to me.")
+        page.send(sender_id, "Insert product name. Make sure name is exact (Press 'Current Products' to see product list)")
 
     page.typing_off(sender_id)
     
@@ -63,11 +63,12 @@ def message_handler(event):
         page.send(sender_id, "CURRENT PRODUCTS:\n"+"\n".join(db.get_current()))
     else:
         product = event.message
-        deleted = db.delete_sub(sender_id, product)
+        print(product)
+        #deleted = db.delete_sub(sender_id, product)
         if(deleted):
-            page.send(sender_id, "Deleted your item.")
+            page.send(sender_id, "Deleted your item")
         else:
-            page.send(sender_id, "Error. Item not found.")
+            page.send(sender_id, "Item not found (product name must be exact)")
         db.change_state(sender_id, 0)
 
     return "Message processed"
