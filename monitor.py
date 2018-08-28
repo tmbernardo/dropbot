@@ -5,6 +5,7 @@ import os
 import time
 import requests
 import dbhandler as db
+import proxy_requests as pr
 
 seconds = 15
 
@@ -20,8 +21,9 @@ def notify(new, restock):
 def get_current():
     while(True):
         print("Checking if new products are on ACRNM")
-        site = requests.get('http://acrnm.com')
-        tree = html.fromstring(site.content)
+        site = pr.ProxyRequests("https://acrnm.com")
+        site.get()
+        tree = html.fromstring(str(site))
 
         # create a list of products from the website
         products = tree.xpath('//div[@class="name"]/text()')
