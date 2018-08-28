@@ -9,8 +9,8 @@ import sqlalchemy as sql
 
 Base = declarative_base()
 
-#heroku pg:psql -a acrbot
-#import dburl
+# heroku pg:psql -a acrbot
+# import dburl
 url = os.environ['DATABASE_URL']
 engine = sql.create_engine(url, pool_size=17, client_encoding='utf8')
 
@@ -149,7 +149,7 @@ def get_table(table, column):
 
 def get_state(fb_id):
     sess = start_sess()
-    user = sess.query(Users).filter(Users.fb_id==fb_id).first() 
+    user = user_exists(fb_id, sess)
     rv = user.state
     sess.close()
     return rv
@@ -162,7 +162,7 @@ def get_current():
 
 def get_subscriptions(fb_id):
     sess = start_sess()
-    user = sess.query(Users).filter(Users.fb_id==fb_id).first() 
+    user = user_exists(fb_id, sess)
     rv = [prod.prod_name for prod in user.subscriptions]
     sess.close()
     return rv
@@ -172,7 +172,7 @@ def delete_user(fb_id):
     TODO: try catch if fb_id is not found
     """
     sess = start_sess()
-    user = sess.query(Users).filter(Users.fb_id==fb_id).first()
+    user = user_exists(fb_id, sess)
     user.subscriptions.clear()
     sess.delete(user)
     sess.commit()
@@ -180,25 +180,26 @@ def delete_user(fb_id):
 
 def change_state(fb_id, state):
     sess = start_sess()
-    if(user_exists(fb_id, sess)):
-        user = sess.query(Users).filter(Users.fb_id==fb_id).first() 
+    user = user_exists(fb_id, sess)
+
+    if user:
         user.state = state
         sess.commit()
         sess.close()
         return True
+
     sess.close()
     return False
 
 def delete_sub(fb_id, prod_name):
     sess = start_sess()
-
+    user = user_exists(fb_id, sess)
     prod = prod_exists(prod_name, sess)
     
-    if not prod:
+    if not prod or not user:
         sess.close()
         return False
-
-    user = sess.query(Users).filter(Users.fb_id==fb_id).first()
+    
     user.subscriptions.remove(prod)
     sess.commit()
     sess.close()

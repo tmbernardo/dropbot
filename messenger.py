@@ -1,5 +1,6 @@
 from fbpage import page
 from fbmq import QuickReply, Template
+
 import os
 import dbhandler as db
 
@@ -45,7 +46,7 @@ def received_postback(event):
     
     elif(payload == "Unsubscribe"):
         db.delete_user(sender_id)
-        page.send(sender_id, "Unsubbed. You may now delete the conversation.")
+        page.send(sender_id, "Unsubbed, you may now delete the conversation")
 
     page.typing_off(sender_id)
     

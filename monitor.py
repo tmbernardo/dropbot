@@ -1,6 +1,7 @@
 from lxml import html
 from fbpage import page
 from flask import Flask, request
+
 import os
 import time
 import requests
@@ -19,10 +20,10 @@ def notify(new, restock):
 def get_current():
     while(True):
         print("Checking if new products are on ACRNM")
+
         site = pr.ProxyRequests("https://acrnm.com")
         site.get()
         tree = html.fromstring(str(site))
-        # create a list of products from the website
         products = tree.xpath('//div[@class="name"]/text()')
 
         new, restock = db.new_items(products)

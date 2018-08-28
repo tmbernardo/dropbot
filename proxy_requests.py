@@ -1,9 +1,10 @@
 #! /usr/bin/python3
-import requests
+from lxml import html
+from requests.auth import HTTPBasicAuth
+
 import re
 import json
-from requests.auth import HTTPBasicAuth
-from lxml import html
+import requests
 
 class ProxyRequests:
     def __init__(self, url):
