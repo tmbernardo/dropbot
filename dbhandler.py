@@ -150,9 +150,12 @@ def get_table(table, column):
 def get_state(fb_id):
     sess = start_sess()
     user = user_exists(fb_id, sess)
-    rv = user.state
+    if user:
+        rv = user.state
+        sess.close()
+        return rv
     sess.close()
-    return rv
+    return None
 
 def get_current():
     sess = start_sess()

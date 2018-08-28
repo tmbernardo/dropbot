@@ -53,7 +53,6 @@ def received_postback(event):
 def message_handler(event):
     sender_id = event.sender_id
     state = db.get_state(sender_id)
-    print(state)
     if(state == 0):
         # get whatever message a user sent the bot
         page.send(sender_id, "CURRENT PRODUCTS:\n"+"\n".join(db.get_current()))
@@ -65,6 +64,8 @@ def message_handler(event):
         else:
             page.send(sender_id, "Item not found (product name not exact or you are already unsubscribed to this product)")
         db.change_state(sender_id, 0)
+    else:
+        page.send(sender_id, "You are unsubscribed, please delete the conversation and resubscribe")
 
     return "Message processed"
 
