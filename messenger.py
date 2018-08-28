@@ -56,10 +56,11 @@ def received_postback(event):
 def message_handler(event):
     sender_id = event.sender_id
     state = db.get_state(sender_id)
+    print(state)
     if(state == 0):
         # get whatever message a user sent the bot
         page.send(sender_id, "CURRENT PRODUCTS:\n"+"\n".join(db.get_current()))
-    else:
+    elif(state == 1):
         product = event.message['text']
         deleted = db.delete_sub(sender_id, product)
         if(deleted):
