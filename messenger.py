@@ -7,15 +7,11 @@ import dbhandler as db
 page.greeting("Click Get Started below to subscribe!!")
 page.show_starting_button("Subscribe")
 
-pers_menu_btns = [
-        "Commands",
-        "Unsubscribe"
-]
-
 buttons = [
         Template.ButtonPostBack("My Subscriptions", "Subs"),
         Template.ButtonPostBack("Current Products", "Products"),
         Template.ButtonPostBack("Remove Notification", "Remove"),
+        Template.ButtonPostBack("Unsubscribe", "Unsub")
 ]
 
 quick_replies = [
@@ -23,17 +19,11 @@ quick_replies = [
         QuickReply(title="No", payload="No")        
 ]
 
-def show_persistent_menu():
-    page.show_persistent_menu([Template.ButtonPostBack(btn, btn) for btn in pers_menu_btns])
-    return "Done with persistent menu section"
-
 def handle_unsub(sender_id):
     page.send(sender_id, "You are unsubscribed, do you want to resubscribe?", quick_replies=quick_replies)
 
 @page.handle_postback
-def received_postback(event):
-    show_persistent_menu()
-    
+def received_postback(event):    
     sender_id = event.sender_id
     recipient_id = event.recipient_id
     time_of_postback = event.timestamp
@@ -44,13 +34,6 @@ def received_postback(event):
     if(payload == "Subscribe"):
         db.insert_user(sender_id)
         page.send(sender_id, "Subbed to all products")
-    
-    elif(payload == "Commands"):
-        page.send(sender_id, Template.Buttons("User Commands", [button for button in buttons]))
-
-    elif(payload == "Unsubscribe"):
-        db.delete_user(sender_id)
-        page.send(sender_id, "Unsubbed, you may now delete the conversation")
 
     page.typing_off(sender_id)
     
@@ -64,8 +47,11 @@ def message_handler(event):
     state = db.get_state(sender_id)
     
     if(state == 0):
-        # get whatever message a user sent the bot
-        page.send(sender_id, "CURRENT PRODUCTS:\n"+"\n".join(db.get_current()))
+        if(message.lower() == "unsubscribe"):
+            db.delete_user(sender_id)
+            page.send(sender_id, "Unsubbed, you may now delete the conversation")
+        else:
+            page.send(sender_id, Template.Buttons("Menu", [button for button in buttons]))
     elif(state == 1):
         deleted = db.delete_sub(sender_id, message)
         if(deleted):
@@ -73,12 +59,6 @@ def message_handler(event):
         else:
             page.send(sender_id, "Item not found (product name not exact or you are already unsubscribed to this product)")
         db.change_state(sender_id, 0)
-    
-    if(message.lower() == "unsubscribe"):
-        db.delete_user(sender_id)
-        page.send(sender_id, "Unsubbed, you may now delete the conversation")
-    elif(message.lower() == "commands"):
-        page.send(sender_id, Template.Buttons("User Commands", [button for button in buttons]))
 
     return "Message processed"
 
@@ -120,6 +100,12 @@ def callback_clicked_rem(payload, event):
         page.send(sender_id, "Insert product name. Make sure name is exact (Press 'Current Products' to see product list)")
     else:
         handle_unsub(sender_id)
+
+@page.callback(['Unsub'])
+def callback_clicked_unsub(payload, event):
+    sender_id = event.sender_id
+    db.delete_user(sender_id)
+    page.send(sender_id, "Unsubbed, you may now delete the conversation")
 
 @page.callback(['Yes_r'])
 def callback_clicked_yes_r(payload, event):
