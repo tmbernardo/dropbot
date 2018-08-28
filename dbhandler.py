@@ -150,7 +150,7 @@ def get_table(table, column):
 def get_state(fb_id):
     sess = start_sess()
     user = sess.query(Users).filter(Users.fb_id==fb_id).first() 
-    rv = user.id
+    rv = user.state
     sess.close()
     return rv
 
