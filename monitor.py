@@ -19,7 +19,7 @@ def notify(new, restock):
 
 def get_current():
     site = ProxyRequests("https://acrnm.com")
-
+    start_time = time.time()
     while(True):
         print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
         site.get()
@@ -35,6 +35,11 @@ def get_current():
             db.insert_current(products)
         
         time.sleep(1)
+
+        if (time.time() - start_time)/60 > 1:
+            print("Pinging the app")
+            os.system("ping https://acrbot.herokuapp.com/")
+        
 
 if  __name__ == "__main__":
     db.create_tables()
