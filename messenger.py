@@ -18,6 +18,11 @@ buttons = [
         Template.ButtonPostBack("Remove Notification", "Remove"),
 ]
 
+quick_replies = [
+        "Yes, resubscribe",
+        "No"
+]
+
 def show_persistent_menu():
     page.show_persistent_menu([Template.ButtonPostBack(btn, btn) for btn in pers_menu_btns])
     return "Done with persistent menu section"
@@ -65,7 +70,7 @@ def message_handler(event):
             page.send(sender_id, "Item not found (product name not exact or you are already unsubscribed to this product)")
         db.change_state(sender_id, 0)
     else:
-        page.send(sender_id, "You are unsubscribed, please delete the conversation and resubscribe")
+        page.send(sender_id, "You are unsubscribed, do you want to resubscribe?", quick_replies=quick_replies)
 
     return "Message processed"
 
@@ -100,3 +105,13 @@ def callback_clicked_rem(payload, event):
     sender_id = event.sender_id
     db.change_state(sender_id, 1)
     page.send(sender_id, "Insert product name. Make sure name is exact (Press 'Current Products' to see product list)")
+
+@page.callback(['Yes, resubscribe'])
+def callback_clicked_yes_r(payload, event):
+    sender_id = event.sender_id
+    db.insert_user(sender_id)
+    page.send(sender_id, "Subbed to all products")
+
+@page.callback(['No'])
+def callback_clicked_no_r(payload, event):
+    pass
