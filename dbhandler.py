@@ -145,7 +145,7 @@ def get_table(table, column):
     sess = start_sess()
     results = sess.query(getattr(table_dict[table],column)).all()
     sess.close()
-    return [] if len(results)==0 else list(zip(*results))[0]
+    return [] if len(results) == 0 else list(zip(*results))[0]
 
 def get_state(fb_id):
     sess = start_sess()
@@ -176,9 +176,6 @@ def get_subscriptions(fb_id):
     return None
 
 def delete_user(fb_id):
-    """ delete entry and associations by fb_id
-    TODO: try catch if fb_id is not found
-    """
     sess = start_sess()
     user = user_exists(fb_id, sess)
 

@@ -12,10 +12,8 @@ VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
 def validate():
     if request.args.get('hub.mode', '') == 'subscribe' and \
         request.args.get('hub.verify_token', '') == VERIFY_TOKEN:
-
-        print("Validating webhook")
+        # print("Validating webhook")
         return request.args.get('hub.challenge', '')
-
     else:
         return 'Failed validation. Make sure the validation tokens match.'
 
