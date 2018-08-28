@@ -8,7 +8,14 @@ page.show_starting_button("Subscribe")
 
 pers_menu_btns = [
         "Current Products",
-        "Unsubscribe"]
+        "Remove notification",
+        "Unsubscribe"
+]
+
+quick_replies = [
+        QuickReply(title="Yes", payload="Yes"),
+        QuickReply(title="No", payload="No")
+]
 
 def show_persistent_menu():
     page.show_persistent_menu([Template.ButtonPostBack(btn, btn) for btn in pers_menu_btns])
@@ -37,16 +44,33 @@ def received_postback(event):
         db.delete_row("users", "fb_id", sender_id)
         page.send(sender_id, "Unsubbed. You may now delete the conversation.")
 
+    elif(payload == "Remove notification"):
+        sender_id = event.sender_id
+        db.change_state(sender_id, 1)
+        page.send(sender_id, "Insert product name. Make sure name is exact, then send it back to me.")
+
     page.typing_off(sender_id)
     
     print("Received postback for user %s and page %s with payload '%s' at %s"
           % (sender_id, recipient_id, payload, time_of_postback))
 
 @page.handle_message
-def message_handler(event): 
-    # get whatever message a user sent the bot
-    page.send(event.sender_id, "CURRENT PRODUCTS:\n"+"\n".join(db.get_current()))
-    return "Message Processed"
+def message_handler(event):
+    sender_id = event.sender_id
+    state = db.get_state(sender_id)
+    if(state == 0):
+        # get whatever message a user sent the bot
+        page.send(sender_id, "CURRENT PRODUCTS:\n"+"\n".join(db.get_current()))
+    else:
+        product = event.payload
+        deleted = db.delete_sub(sender_id, product)
+        if(deleted):
+            page.send(sender_id, "Deleted your item.")
+        else:
+            page.send(sender_id, "Error. Item not found.")
+        db.change_state(sender_id, 0)
+
+    return "Message processed"
 
 @page.handle_delivery
 def received_delivery_confirmation(event):

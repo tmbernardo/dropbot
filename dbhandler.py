@@ -150,6 +150,13 @@ def get_table(table, column):
     sess.close()
     return [] if len(results)==0 else list(zip(*results))[0]
 
+def get_state(fb_id):
+    sess = start_sess()
+    user = sess.query(Users).filter(Users.fb_id==fb_id).first() 
+    rv = user.id
+    sess.close()
+    return rv
+
 def delete_user(fb_id):
     """ delete entry and associations by fb_id
     TODO: try catch if fb_id is not found
@@ -160,6 +167,17 @@ def delete_user(fb_id):
     sess.delete(user)
     sess.commit()
     sess.close()
+
+def change_state(fb_id, state):
+    sess = start_sess()
+    if(user_exists(fb_id, sess)):
+        user = sess.query(Users).filter(Users.fb_id==fb_id).first() 
+        user.state = state
+        sess.commit()
+        sess.close()
+        return True
+    sess.close()
+    return False
 
 def delete_sub(fb_id, prod_name):
     sess = start_sess()
