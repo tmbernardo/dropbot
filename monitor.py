@@ -31,14 +31,14 @@ def get_current():
         prod_names = tree.xpath("//div[@class='name']/text()")
         prod_urls = tree.xpath("//a[contains(concat(' ', normalize-space(@class), ' '), ' tile ')]/@href")
         new, restock = db.new_items(prod_names, prod_urls)
+
         if new:
             new = list(zip(*new))
             notify(new[1], restock)
+            db.insert_products(new[0])
         else:
             notify(new, restock)
 
-        if new:
-            db.insert_products(new[0])
         if new or restock:
             db.insert_current(prod_names, prod_urls)
             
@@ -49,7 +49,6 @@ def get_current():
             requests.get("https://acrbot.herokuapp.com/")
             start_time = time.time()
         
-
 if  __name__ == "__main__":
     db.create_tables()
     get_current()
