@@ -75,11 +75,13 @@ def new_items(prod_names, prod_urls=None):
     for i, name in enumerate(prod_names):
         prod = prod_exists(name,sess)
         cur = current_exists(name,sess)
+        # new product, fresh off the racks
         if not prod:
-            if(cur and prod_urls):
+            if(prod_urls):
                 new.append((name, prod_urls[i]))
             else:
                 new.append((name, None))
+        # restock
         if prod and (not cur):
             for sub in prod.subscribers:
                 if prod_urls:
