@@ -19,13 +19,13 @@ sub_btn = [
 ]
 
 quick_replies = [
-        QuickReply(title="Yes, resubscribe", payload="Yes_r"),
+        QuickReply(title="Yes, subscribe", payload="Yes_r"),
         QuickReply(title="No", payload="No")        
 ]
 
 def handle_unsub(sender_id):
-    page.send(sender_id, "You are unsubscribed, enter access code to subscribe")
-#    page.send(sender_id, "You are unsubscribed, enter access code to subscribe", quick_replies=quick_replies)
+#    page.send(sender_id, "You are unsubscribed, enter access code to subscribe")
+    page.send(sender_id, "You are unsubscribed, would you like to subscribe?", quick_replies=quick_replies)
 
 @page.handle_postback
 def received_postback(event):    
@@ -37,10 +37,14 @@ def received_postback(event):
     page.typing_on(sender_id)
 
     if(payload == "Subscribe"):
-        if not db.user_exists(sender_id):
-            handle_unsub(sender_id)
-        else:
-            page.send(sender_id, "Already subscribed")
+#        if not db.user_exists(sender_id):
+#            handle_unsub(sender_id)
+#        else:
+#            page.send(sender_id, "Already subscribed")
+        if db.insert_user(sender_id):
+            page.send(sender_id, "Subbed to all products")
+            page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
+            page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
 
     page.typing_off(sender_id)
     
@@ -53,13 +57,13 @@ def message_handler(event):
     message = event.message['text']
     state = db.get_state(sender_id)
     
-    if not (message == password) and not (db.user_exists(sender_id)):
-        handle_unsub(sender_id)
-        return
-    elif message == password and db.insert_user(sender_id):
-        page.send(sender_id, "Subbed to all products")
-        page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
-        page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
+#    if not (message == password) and not (db.user_exists(sender_id)):
+#        handle_unsub(sender_id)
+#        return
+#    elif message == password and db.insert_user(sender_id):
+#        page.send(sender_id, "Subbed to all products")
+#        page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
+#        page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
 
     if(state == 0):
         if(message.lower() == "unsubscribe"):
