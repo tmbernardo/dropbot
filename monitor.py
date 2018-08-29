@@ -33,6 +33,7 @@ def get_current():
         if new:
             new = list(zip(*new))[0]
         if restock:
+            print(restock)
             restock = list(zip(*restock))[1]
         notify(new, restock)
         
