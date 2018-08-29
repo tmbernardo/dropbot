@@ -46,5 +46,5 @@ def get_current():
         
 
 if  __name__ == "__main__":
-#    db.create_tables()
+    db.create_tables()
     get_current()
