@@ -132,7 +132,6 @@ def insert_current(vlist, url_list=None):
         curr.product = prod
         if url_list:
             curr.prod_url = url_list[i]
-        curr.prod_url = url
         prods.append(curr)
 
     sess.add_all(prods)
