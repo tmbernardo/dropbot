@@ -30,8 +30,10 @@ def get_current():
         prod_names = tree.xpath("//div[@class='name']/text()")
         prod_urls = tree.xpath("//a[contains(concat(' ', normalize-space(@class), ' '), ' tile ')]/@href")
         new, restock = db.new_items(prod_names, prod_urls)
-        new = list(zip(*new))[0]
-        restock = list(zip(*restock))[0]
+        if new:
+            new = list(zip(*new))[0]
+        if restock:
+            restock = list(zip(*restock))[1]
         notify(new, restock)
         
         if new:
