@@ -21,7 +21,7 @@ def get_current():
     url = "https://acrnm.com"
     site = ProxyRequests(url)
     start_time = time.time()
-    
+
     while(True):
         print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
         site.get()
@@ -32,7 +32,7 @@ def get_current():
         prod_urls = tree.xpath("//a[contains(concat(' ', normalize-space(@class), ' '), ' tile ')]/@href")
         new, restock = db.new_items(prod_names, prod_urls)
         if new:
-            new = list(zip(*new))[0]
+            new = list(zip(*new))[1]
 
         notify(new, restock)
 
