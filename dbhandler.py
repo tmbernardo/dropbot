@@ -38,8 +38,9 @@ class Subs(Base):
 class Current(Base):
     __tablename__ = "current"
     prod_id = Column(Integer, ForeignKey('products.id'), primary_key=True)
+    prod_url = Column(String, nullable=True)
     product = relationship('Products', uselist=False)
-
+    
 table_dict = {
         "Users": Users,
         "Products": Products,
@@ -75,7 +76,10 @@ def new_items(prod_names, prod_urls=None):
         prod = prod_exists(name,sess)
         cur = current_exists(name,sess)
         if not prod:
-            new.append(name)
+            if(cur.prod_url):
+                new.append((name, cur.prod_url))
+            else:
+                new.append((name, None))
         if prod and (not cur):
             for sub in prod.subscribers:
                 restock.setdefault(sub.fb_id, []).append(name)
@@ -116,16 +120,19 @@ def insert_user(value):
     sess.close()
     return True
 
-def insert_current(vlist):
+def insert_current(vlist, url_list=None):
     sess = start_sess()
     prods = []
 
     sess.query(Current).delete()
 
-    for v in vlist:
+    for i, v in enumerate(vlist):
         prod = get_product(v, sess)
         curr = Current()
         curr.product = prod
+        if url_list:
+            curr.prod_url = url_list[i]
+        curr.prod_url = url
         prods.append(curr)
 
     sess.add_all(prods)
