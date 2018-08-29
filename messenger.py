@@ -79,6 +79,8 @@ def message_handler(event):
         else:
             page.send(sender_id, "Item not found (product name not exact or you are already unsubscribed to this product)")
         db.change_state(sender_id, 0)
+    elif message == "Yes, subscribe":
+        return
     else:
         handle_unsub(sender_id)
 
