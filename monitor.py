@@ -15,7 +15,7 @@ def notify(new, restock):
         print("Notified all users")
     
     for sub in restock.keys():
-        page.send(sub, "RESTOCK:\n"+"\n".join(restock[sub][1]))
+        page.send(sub, "RESTOCK:\n"+"\n".join(restock[sub]))
 
 def get_current():
     url = "https://acrnm.com"
@@ -30,10 +30,12 @@ def get_current():
         prod_names = tree.xpath("//div[@class='name']/text()")
         prod_urls = tree.xpath("//a[contains(concat(' ', normalize-space(@class), ' '), ' tile ')]/@href")
         new, restock = db.new_items(prod_names, prod_urls)
+        new = list(zip(*new))[0]
+        restock = list(zip(*restock))[0]
         notify(new, restock)
         
         if new:
-            db.insert_products(list(zip(*new))[0])
+            db.insert_products(new)
         if new or restock:
             db.insert_current(prod_names, prod_urls)
             
