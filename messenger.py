@@ -24,7 +24,8 @@ quick_replies = [
 ]
 
 def handle_unsub(sender_id):
-    page.send(sender_id, "You are unsubscribed, enter access code to subscribe", quick_replies=quick_replies)
+    page.send(sender_id, "You are unsubscribed, enter access code to subscribe")
+#    page.send(sender_id, "You are unsubscribed, enter access code to subscribe", quick_replies=quick_replies)
 
 @page.handle_postback
 def received_postback(event):    
