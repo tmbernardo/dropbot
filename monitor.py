@@ -15,7 +15,7 @@ def notify(new, restock):
         print("Notified all users")
     
     for sub in restock.keys():
-        page.send(sub, "RESTOCK:\n"+"\n".join(restock[sub]))
+        page.send(sub, "RESTOCK:\n"+"\n".join(restock[sub][1]))
 
 def get_current():
     url = "https://acrnm.com"
