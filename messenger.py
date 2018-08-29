@@ -6,7 +6,7 @@ import dbhandler as db
 
 page.greeting("Click Get Started below to subscribe!!")
 page.show_starting_button("Subscribe")
-password = "happybirthdaymatt"
+password = os.environ["PASSWORD"]
 
 menu_buttons = [
         Template.ButtonPostBack("My Subscriptions", "Subs"),
@@ -26,7 +26,6 @@ quick_replies = [
 def handle_unsub(sender_id):
     page.send(sender_id, "You are unsubscribed, enter access code to subscribe", quick_replies=quick_replies)
 
-
 @page.handle_postback
 def received_postback(event):    
     sender_id = event.sender_id
@@ -39,10 +38,6 @@ def received_postback(event):
     if(payload == "Subscribe"):
         if not db.user_exists(sender_id):
             handle_unsub(sender_id)
-        if db.insert_user(sender_id):
-            page.send(sender_id, "Subbed to all products")
-            page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
-            page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
         else:
             page.send(sender_id, "Already subscribed")
 
@@ -57,9 +52,14 @@ def message_handler(event):
     message = event.message['text']
     state = db.get_state(sender_id)
     
-    if not (db.user_exists(sender_id) and password == password):
+    if not (message == password) and not (db.user_exists(sender_id)):
         handle_unsub(sender_id)
         return
+    elif message == password and db.insert_user(sender_id):
+        page.send(sender_id, "Subbed to all products")
+        page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
+        page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
+
     if(state == 0):
         if(message.lower() == "unsubscribe"):
             db.delete_user(sender_id)
