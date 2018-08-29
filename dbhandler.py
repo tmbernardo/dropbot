@@ -72,18 +72,21 @@ def new_items(prod_names, prod_urls=None):
     restock = {}
     sess = start_sess()
 
-    for name in prod_names:
+    for i, name in enumerate(prod_names):
         prod = prod_exists(name,sess)
         cur = current_exists(name,sess)
         if not prod:
-            if(cur and cur.prod_url):
-                new.append((name, cur.prod_url))
+            if(cur and prod_urls):
+                new.append((name, prod_urls[i]))
             else:
                 new.append((name, None))
         if prod and (not cur):
             for sub in prod.subscribers:
-                restock.setdefault(sub.fb_id, []).append(name)
-
+                if prod_urls:
+                    restock.setdefault(sub.fb_id, []).append((name, prod_urls[i]))
+                else:
+                    restock.setdefault(sub.fb_id, []).append(name)
+    
     sess.close()
     return new, restock
 
