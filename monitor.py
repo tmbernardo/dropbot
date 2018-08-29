@@ -33,8 +33,9 @@ def get_current():
         new, restock = db.new_items(prod_names, prod_urls)
         if new:
             new = list(zip(*new))
-
-        notify(new[1], restock)
+            notify(new[1], restock)
+        else:
+            notify(new, restock)
 
         if new:
             db.insert_products(new[0])
