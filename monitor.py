@@ -1,12 +1,12 @@
 from lxml import html
-#from fbpage import page
+from fbpage import page
 from flask import Flask, request
 from proxy_requests import ProxyRequests
 
 import os
 import time
 import requests
-#import dbhandler as db
+import dbhandler as db
 
 def notify(new, restock):
     if new:
