@@ -38,7 +38,7 @@ def received_postback(event):
 
     if(payload == "Subscribe"):
         if not db.user_exists(sender_id):
-            handle_unsub()
+            handle_unsub(sender_id)
         if db.insert_user(sender_id):
             page.send(sender_id, "Subbed to all products")
             page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
@@ -58,7 +58,7 @@ def message_handler(event):
     state = db.get_state(sender_id)
     
     if not (db.user_exists(sender_id) and password == password):
-        handle_unsub()
+        handle_unsub(sender_id)
         return
     if(state == 0):
         if(message.lower() == "unsubscribe"):
