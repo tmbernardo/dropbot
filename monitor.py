@@ -15,12 +15,13 @@ def notify(new, restock):
         print("Notified all users")
     
     for sub in restock.keys():
-        page.send(sub, "RESTOCK:\n"+"\n".join(restock[sub]))
+        page.send(sub, "RESTOCK:\n"+"\n".join(list(zip(*restock[sub]))[1]))
 
 def get_current():
     url = "https://acrnm.com"
     site = ProxyRequests(url)
     start_time = time.time()
+    
     while(True):
         print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
         site.get()
@@ -32,11 +33,9 @@ def get_current():
         new, restock = db.new_items(prod_names, prod_urls)
         if new:
             new = list(zip(*new))[0]
-        if restock:
-            print(restock)
-            restock = list(zip(*restock))[1]
+
         notify(new, restock)
-        
+
         if new:
             db.insert_products(new)
         if new or restock:
