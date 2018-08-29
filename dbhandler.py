@@ -76,7 +76,7 @@ def new_items(prod_names, prod_urls=None):
         prod = prod_exists(name,sess)
         cur = current_exists(name,sess)
         if not prod:
-            if(cur.prod_url):
+            if(cur and cur.prod_url):
                 new.append((name, cur.prod_url))
             else:
                 new.append((name, None))
