@@ -58,7 +58,7 @@ def create_tables():
     sess.commit()
     sess.close()
 
-def user_exists(user, sess):
+def user_exists(user, sess=start_sess()):
     return sess.query(Users).filter(Users.fb_id==user).scalar()
 
 def prod_exists(prod, sess):
