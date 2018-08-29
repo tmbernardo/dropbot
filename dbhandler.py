@@ -66,19 +66,19 @@ def prod_exists(prod, sess):
 def current_exists(prod_name, sess):
     return sess.query(Current).filter(Current.product.has(Products.prod_name==prod_name)).scalar()
 
-def new_items(vlist):
+def new_items(prod_names, prod_urls=None):
     new = []
     restock = {}
     sess = start_sess()
 
-    for v in vlist:
-        prod = prod_exists(v,sess)
-        cur = current_exists(v,sess)
+    for name in prod_names:
+        prod = prod_exists(name,sess)
+        cur = current_exists(name,sess)
         if not prod:
-            new.append(v)
+            new.append(name)
         if prod and (not cur):
             for sub in prod.subscribers:
-                restock.setdefault(sub.fb_id, []).append(v)
+                restock.setdefault(sub.fb_id, []).append(name)
 
     sess.close()
     return new, restock

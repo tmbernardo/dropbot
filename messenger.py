@@ -37,10 +37,10 @@ def received_postback(event):
     if(payload == "Subscribe"):
         if db.insert_user(sender_id):
             page.send(sender_id, "Subbed to all products")
-            page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
-            page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
         else:
             page.send(sender_id, "Already subscribed")
+        page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
+        page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
 
     page.typing_off(sender_id)
     

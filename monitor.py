@@ -1,12 +1,12 @@
 from lxml import html
-from fbpage import page
+#from fbpage import page
 from flask import Flask, request
 from proxy_requests import ProxyRequests
 
 import os
 import time
 import requests
-import dbhandler as db
+#import dbhandler as db
 
 def notify(new, restock):
     if new:
@@ -18,31 +18,33 @@ def notify(new, restock):
         page.send(sub, "RESTOCK:\n"+"\n".join(restock[sub]))
 
 def get_current():
-    site = ProxyRequests("https://acrnm.com")
+    url = "https://acrnm.com"
+    site = ProxyRequests(url)
     start_time = time.time()
     while(True):
         print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
         site.get()
         tree = html.fromstring(str(site))
-#        products = tree.xpath('//div[@class="name"]/text()')
-        products = tree.xpath('//div[@class="name"]/text()')
+        tree.make_links_absolute(url)
 
-        new, restock = db.new_items(products)
-        notify(new, restock)
+        prod_names = tree.xpath("//div[@class='name']/text()")
+        prod_urls = tree.xpath("//a[contains(concat(' ', normalize-space(@class), ' '), ' tile ')]/@href")
+        new, restock = db.new_items(prod_names, prod_urls)
+#        notify(new, restock)
+#        
+#        if new:
+#            db.insert_products(new)
+#        if new or restock:
+#            db.insert_current(products)
         
-        if new:
-            db.insert_products(new)
-        if new or restock:
-            db.insert_current(products)
-        
-        time.sleep(1)
+#        time.sleep(1)
 
-        if (time.time() - start_time)/60 > 25:
-            print("Pinging the app")
-            requests.get("https://acrbot.herokuapp.com/")
-            start_time = time.time()
+#        if (time.time() - start_time)/60 > 25:
+#            print("Pinging the app")
+#            requests.get("https://acrbot.herokuapp.com/")
+#            start_time = time.time()
         
 
 if  __name__ == "__main__":
-    db.create_tables()
+#    db.create_tables()
     get_current()
