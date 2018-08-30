@@ -39,12 +39,11 @@ def get_current():
         else:
             notify(new, restock)
 
-        if new or restock:
-            db.insert_current(prod_names, prod_urls)
+        db.insert_current(prod_names, prod_urls)
             
         time.sleep(1)
 
-        if (time.time() - start_time)/60 > 25:
+        if (time.time() - start_time)/60 > 29:
             print("Pinging the app")
             requests.get("https://acrbot.herokuapp.com/")
             start_time = time.time()

@@ -131,6 +131,9 @@ def insert_current(vlist, url_list=None):
 
     sess.query(Current).delete()
 
+    if not vlist:
+        return
+
     for i, v in enumerate(vlist):
         prod = get_product(v, sess)
         curr = Current()
