@@ -41,7 +41,7 @@ def get_current():
 
         db.insert_current(prod_names, prod_urls)
             
-        time.sleep(1)
+#        time.sleep(1)
 
         if (time.time() - start_time)/60 > 25:
             print("Pinging the app")
