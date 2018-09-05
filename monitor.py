@@ -22,6 +22,8 @@ def get_current():
     site = ProxyRequests(url)
     start_time = time.time()
 
+    requests.get("https://acrbot.herokuapp.com/")
+    
     while(True):
         print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
         site.get()
