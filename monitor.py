@@ -45,7 +45,7 @@ def get_current():
             
 #        time.sleep(1)
 
-        if (time.time() - start_time)/60 > 29:
+        if (time.time() - start_time)/60 > 25:
             print("Pinging the app")
             requests.get("https://acrbot.herokuapp.com/")
             start_time = time.time()
