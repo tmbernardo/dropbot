@@ -42,8 +42,6 @@ def received_postback(event):
             handle_unsub(sender_id)
         else:
             page.send(sender_id, "Already subscribed")
-            page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
-            page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
 
     page.typing_off(sender_id)
     
@@ -68,9 +66,6 @@ def message_handler(event):
         if(message.lower() == "unsubscribe"):
             db.delete_user(sender_id)
             page.send(sender_id, "Unsubbed, you may now delete the conversation")
-        else:
-            page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
-            page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
     elif(state == 1):
         deleted = db.delete_sub(sender_id, message)
         if(deleted):
