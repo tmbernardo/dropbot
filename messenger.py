@@ -24,7 +24,6 @@ quick_replies = [
 page.greeting("Click Get Started below to subscribe!!")
 page.show_starting_button("Subscribe")
 #page.show_persistent_menu(menu_buttons)
-p_menu()
 
 def p_menu():
     acct_menu = {"title":"My Account", "type":"nested"}
@@ -41,6 +40,8 @@ def p_menu():
     acct_menu["call_to_actions": call_to_actions]
 
     page._set_profile_property("persistent_menu", menu)
+
+p_menu()
 
 def handle_unsub(sender_id):
     page.send(sender_id, "You are unsubscribed, enter access code to subscribe")
