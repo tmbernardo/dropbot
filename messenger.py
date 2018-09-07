@@ -94,6 +94,8 @@ def message_handler(event):
     if not (message == password) and not (db.user_exists(sender_id)):
         handle_unsub(sender_id)
         return
+    elif message == password and db.insert_user(sender_id):
+        page.send(sender_id, "Subbed to all products")
 
     if(state == 0):
         if(message.lower() == "unsubscribe"):
