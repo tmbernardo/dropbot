@@ -8,6 +8,11 @@ import time
 import requests
 import dbhandler as db
 
+def update_message():
+    with open("CHANGELOG", 'r') open as changes:
+        for user in db.get_table("Users", "fb_id"):
+            page.send(user, changes.readlines())
+
 def notify(new, restock):
     if new:
         for user in db.get_table("Users", "fb_id"):
@@ -52,4 +57,5 @@ def get_current():
         
 if  __name__ == "__main__":
     db.create_tables()
+    update_message()
     get_current()
