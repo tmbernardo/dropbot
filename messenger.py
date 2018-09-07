@@ -23,7 +23,24 @@ quick_replies = [
 
 page.greeting("Click Get Started below to subscribe!!")
 page.show_starting_button("Subscribe")
-page.show_persistent_menu(menu_buttons)
+#page.show_persistent_menu(menu_buttons)
+p_menu()
+
+def p_menu():
+    acct_menu = {"title":"My Account", "type":"nested"}
+    menu = {"locale": "default", "composer_input_disabled": True, "call_to_actions": acct_menu}
+    call_to_actions = []
+
+    for button in Template.Buttons.convert_shortcut_buttons(menu_buttons):
+        call_to_actions.append({
+            "type": "postback",
+            "title": button.title,
+            "payload": button.payload
+        })
+
+    acct_menu["call_to_actions": call_to_actions]
+
+    page._set_profile_property("persistent_menu", menu)
 
 def handle_unsub(sender_id):
     page.send(sender_id, "You are unsubscribed, enter access code to subscribe")
