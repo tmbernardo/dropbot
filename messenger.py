@@ -26,7 +26,7 @@ page.greeting("Click Get Started below to subscribe!!")
 page.show_starting_button("Subscribe")
 #page.show_persistent_menu(acct_menu_btns)
 
-def _set_profile_property(self, pname, pval):
+def _set_profile_property(pname, pval):
     data=json.dumps({pname: pval})
     print(data)
 
