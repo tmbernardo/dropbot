@@ -6,14 +6,14 @@ import dbhandler as db
 
 password = os.environ["PASSWORD"]
 
-menu_buttons = [
+acct_menu_btns = [
         Template.ButtonPostBack("My Subscriptions", "MENUPAYLOAD/Subs"),
-        Template.ButtonPostBack("Current Products", "MENUPAYLOAD/Products"),
         Template.ButtonPostBack("Remove Notification", "MENUPAYLOAD/Remove"),
+        Template.ButtonPostBack("Unsubscribe", "Unsub")
 ]
 
-sub_btn = [
-        Template.ButtonPostBack("Unsubscribe", "Unsub")
+simple_menu_btns = [
+        Template.ButtonPostBack("Current Products", "MENUPAYLOAD/Products"),
 ]
 
 quick_replies = [
@@ -23,21 +23,26 @@ quick_replies = [
 
 page.greeting("Click Get Started below to subscribe!!")
 page.show_starting_button("Subscribe")
-#page.show_persistent_menu(menu_buttons)
 
 def p_menu():
-    acct_menu = {"title":"My Account", "type":"nested"}
-    menu = [{"locale": "default", "composer_input_disabled": True, "call_to_actions": [acct_menu]}]
-    call_to_actions = []
+    menu = []
 
-    for button in Template.Buttons.convert_shortcut_buttons(menu_buttons):
-        call_to_actions.append({
+    menu.append({"locale": "default", "composer_input_disabled": True, "call_to_actions": []})
+    menu[0]["call_to_actions"].append({"title":"My Account", "type":"nested", "call_to_actions": []})
+
+    for button in Template.Buttons.convert_shortcut_buttons(acct_menu_btns):
+        menu[0]["call_to_actions"][0]["call_to_actions"].append({
             "type": "postback",
             "title": button.title,
             "payload": button.payload
         })
-
-    acct_menu["call_to_actions"] = call_to_actions
+    
+    for button in Template.Buttons.convert_shortcut_buttons(simple_menu_btns):
+        menu[0]["call_to_actions"].append({
+            "type": "postback",
+            "title": button.title,
+            "payload": button.payload
+        })
 
     page._set_profile_property("persistent_menu", menu)
 
@@ -75,10 +80,6 @@ def message_handler(event):
     if not (message == password) and not (db.user_exists(sender_id)):
         handle_unsub(sender_id)
         return
-    elif message == password and db.insert_user(sender_id):
-        page.send(sender_id, "Subbed to all products")
-        page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
-        page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
 
     if(state == 0):
         if(message.lower() == "unsubscribe"):
