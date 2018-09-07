@@ -26,10 +26,6 @@ page.greeting("Click Get Started below to subscribe!!")
 page.show_starting_button("Subscribe")
 #page.show_persistent_menu(acct_menu_btns)
 
-def _set_profile_property(pname, pval):
-    data=json.dumps({pname: pval})
-    print(data)
-
 def p_menu():
     acct_menu = {"title":"My Account", "type":"nested"}
     menu = [{"locale": "default", "call_to_actions": [acct_menu]}]
@@ -51,7 +47,7 @@ def p_menu():
 
     acct_menu["call_to_actions"] = call_to_actions
 
-    _set_profile_property(pname="persistent_menu", pval=menu)
+    page._set_profile_property(pname="persistent_menu", pval=menu)
 #    menu = []
 #
 #    menu.append({"locale": "default", "composer_input_disabled": True, "call_to_actions": []})
