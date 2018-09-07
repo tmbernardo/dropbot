@@ -36,6 +36,13 @@ def p_menu():
             "payload": button.payload
         })
 
+    for button in Template.Buttons.convert_shortcut_buttons(simple_menu_btns):
+        menu[0]["call_to_actions"].append({
+            "type": "postback",
+            "title": button.title,
+            "payload": button.payload
+        })
+
     acct_menu["call_to_actions"] = call_to_actions
 
     page._set_profile_property("persistent_menu", menu)
