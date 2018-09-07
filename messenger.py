@@ -26,7 +26,7 @@ page.show_starting_button("Subscribe")
 
 def p_menu():
     acct_menu = {"title":"My Account", "type":"nested"}
-    menu = [{"locale": "default", "composer_input_disabled": True, "call_to_actions": [acct_menu]}]
+    menu = [{"locale": "default", "composer_input_disabled": False, "call_to_actions": [acct_menu]}]
     call_to_actions = []
 
     for button in Template.Buttons.convert_shortcut_buttons(acct_menu_btns):
