@@ -76,8 +76,11 @@ def received_postback(event):
 @page.handle_message
 def message_handler(event):
     sender_id = event.sender_id
-    message = event.message['text']
+    message = event.message.get('text')
     state = db.get_state(sender_id)
+
+    if not message:
+        return
     
     if not (message == password) and not (db.user_exists(sender_id)):
         handle_unsub(sender_id)
