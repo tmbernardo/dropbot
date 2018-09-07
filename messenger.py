@@ -1,21 +1,20 @@
 from fbpage import page
 from fbmq import QuickReply, Template
 
+import json
 import os
 import dbhandler as db
 
-page.greeting("Click Get Started below to subscribe!!")
-page.show_starting_button("Subscribe")
 password = os.environ["PASSWORD"]
 
-menu_buttons = [
-        Template.ButtonPostBack("My Subscriptions", "Subs"),
-        Template.ButtonPostBack("Current Products", "Products"),
-        Template.ButtonPostBack("Remove Notification", "Remove"),
+acct_menu_btns = [
+        Template.ButtonPostBack("My Subscriptions", "MENUPAYLOAD/Subs"),
+        Template.ButtonPostBack("Remove Notification", "MENUPAYLOAD/Remove"),
+        Template.ButtonPostBack("Unsubscribe", "Unsub")
 ]
 
-sub_btn = [
-        Template.ButtonPostBack("Unsubscribe", "Unsub")
+simple_menu_btns = [
+        Template.ButtonPostBack("Current Products", "MENUPAYLOAD/Products"),
 ]
 
 quick_replies = [
@@ -23,9 +22,36 @@ quick_replies = [
         QuickReply(title="No", payload="No")        
 ]
 
+page.greeting("Click Get Started below to subscribe!!")
+page.show_starting_button("Subscribe")
+
+def p_menu():
+    acct_menu = {"title":"My Account", "type":"nested"}
+    menu = [{"locale": "default", "call_to_actions": [acct_menu]}]
+    call_to_actions = []
+
+    for button in Template.Buttons.convert_shortcut_buttons(acct_menu_btns):
+        call_to_actions.append({
+            "type": "postback",
+            "title": button.title,
+            "payload": button.payload
+        })
+
+    for button in Template.Buttons.convert_shortcut_buttons(simple_menu_btns):
+        menu[0]["call_to_actions"].append({
+            "type": "postback",
+            "title": button.title,
+            "payload": button.payload
+        })
+
+    acct_menu["call_to_actions"] = call_to_actions
+
+    page._set_profile_property(pname="persistent_menu", pval=menu)
+
+p_menu()
+
 def handle_unsub(sender_id):
     page.send(sender_id, "You are unsubscribed, enter access code to subscribe")
-#    page.send(sender_id, "You are unsubscribed, would you like to subscribe?", quick_replies=quick_replies)
 
 @page.handle_postback
 def received_postback(event):    
@@ -41,12 +67,6 @@ def received_postback(event):
             handle_unsub(sender_id)
         else:
             page.send(sender_id, "Already subscribed")
-            page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
-            page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
-#        if db.insert_user(sender_id):
-#            page.send(sender_id, "Subbed to all products")
-#            page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
-#            page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
 
     page.typing_off(sender_id)
     
@@ -64,16 +84,11 @@ def message_handler(event):
         return
     elif message == password and db.insert_user(sender_id):
         page.send(sender_id, "Subbed to all products")
-        page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
-        page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
 
     if(state == 0):
         if(message.lower() == "unsubscribe"):
             db.delete_user(sender_id)
             page.send(sender_id, "Unsubbed, you may now delete the conversation")
-        else:
-            page.send(sender_id, Template.Buttons("Menu", [button for button in menu_buttons]))
-            page.send(sender_id, Template.Buttons("------------------------------", [button for button in sub_btn]))
     elif(state == 1):
         deleted = db.delete_sub(sender_id, message)
         if(deleted):
@@ -81,10 +96,6 @@ def message_handler(event):
         else:
             page.send(sender_id, "Item not found (product name not exact or you are already unsubscribed to this product)")
         db.change_state(sender_id, 0)
-#    elif message == "Yes, subscribe":
-#        return
-#    else:
-#        handle_unsub(sender_id)
 
     return "Message processed"
 
@@ -105,6 +116,17 @@ def received_message_read(event):
     watermark = event.read.get("watermark")
     seq = event.read.get("seq")
     # print("Received message read event for watermark %s and sequence number %s" % (watermark, seq))
+
+@page.callback(['MENUPAYLOAD/(.+)'])
+def callback_clicked_p_menu(payload, event):
+    sender_id = event.sender_id
+    click_menu = payload.split('/')[1]
+    if click_menu == 'Subs':
+        callback_clicked_subs(payload, event)
+    elif click_menu == 'Products':
+        callback_clicked_prods(payload, event)
+    elif click_menu == 'Remove':
+        callback_clicked_rem(payload, event)
 
 @page.callback(['Subs'])
 def callback_clicked_subs(payload, event):
