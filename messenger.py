@@ -24,20 +24,20 @@ quick_replies = [
 
 page.greeting("Click Get Started below to subscribe!!")
 page.show_starting_button("Subscribe")
-#page.show_persistent_menu(acct_menu_btns)
 
 def p_menu():
-    acct_menu = {"title":"My Account", "type":"nested"}
-    menu = [{"locale": "default", "call_to_actions": [acct_menu]}]
-    call_to_actions = []
+    menu = []
+
+    menu.append({"locale": "default", "call_to_actions": []})
+    menu[0]["call_to_actions"].append({"title":"My Account", "type":"nested", "call_to_actions": []})
 
     for button in Template.Buttons.convert_shortcut_buttons(acct_menu_btns):
-        call_to_actions.append({
+        menu[0]["call_to_actions"][0]["call_to_actions"].append({
             "type": "postback",
             "title": button.title,
             "payload": button.payload
         })
-
+    
     for button in Template.Buttons.convert_shortcut_buttons(simple_menu_btns):
         menu[0]["call_to_actions"].append({
             "type": "postback",
@@ -45,29 +45,7 @@ def p_menu():
             "payload": button.payload
         })
 
-    acct_menu["call_to_actions"] = call_to_actions
-
-    page._set_profile_property(pname="persistent_menu", pval=menu)
-#    menu = []
-#
-#    menu.append({"locale": "default", "composer_input_disabled": True, "call_to_actions": []})
-#    menu[0]["call_to_actions"].append({"title":"My Account", "type":"nested", "call_to_actions": []})
-#
-#    for button in Template.Buttons.convert_shortcut_buttons(acct_menu_btns):
-#        menu[0]["call_to_actions"][0]["call_to_actions"].append({
-#            "type": "postback",
-#            "title": button.title,
-#            "payload": button.payload
-#        })
-#    
-#    for button in Template.Buttons.convert_shortcut_buttons(simple_menu_btns):
-#        menu[0]["call_to_actions"].append({
-#            "type": "postback",
-#            "title": button.title,
-#            "payload": button.payload
-#        })
-#
-#    page._set_profile_property("persistent_menu", menu)
+    page._set_profile_property("persistent_menu", menu)
 
 p_menu()
 
