@@ -91,7 +91,7 @@ def message_handler(event):
             db.delete_user(sender_id)
             page.send(sender_id, "Unsubbed, you may now delete the conversation")
     elif(state == 1):
-        message = re.sub("[\W+]", "", message.upper())
+        message = re.sub("[\W+]", "_", message.upper())
         deleted = db.delete_sub(sender_id, message)
         if(deleted):
             page.send(sender_id, "Deleted your item")
