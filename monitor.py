@@ -24,7 +24,7 @@ def get_current():
 
     requests.get("https://acrbot.herokuapp.com/")
     
-    while(True):
+    while(True):        
         if (time.time() - start_time)/60 > 25:
             print("Pinging the app")
             requests.get("https://acrbot.herokuapp.com/")
@@ -32,8 +32,10 @@ def get_current():
 
         print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
         status_code = site.get()
+        
         if(status_code != 200):
             continue
+        
         tree = html.fromstring(str(site))
         tree.make_links_absolute(url)
 
