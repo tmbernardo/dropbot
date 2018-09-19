@@ -32,7 +32,7 @@ def get_current():
 
         print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
         status_code = site.get()
-        if(status_code != "200"):
+        if(status_code != 200):
             continue
         tree = html.fromstring(str(site))
         tree.make_links_absolute(url)
