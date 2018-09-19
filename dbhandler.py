@@ -4,6 +4,7 @@ from sqlalchemy.orm import joinedload, relationship, sessionmaker
 from sqlalchemy import Table, Column, Integer, BigInteger, String, ForeignKey, Sequence
 
 import os
+import re
 import psycopg2
 import sqlalchemy as sql
 
