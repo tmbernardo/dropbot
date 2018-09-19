@@ -25,8 +25,15 @@ def get_current():
     requests.get("https://acrbot.herokuapp.com/")
     
     while(True):
+        if (time.time() - start_time)/60 > 25:
+            print("Pinging the app")
+            requests.get("https://acrbot.herokuapp.com/")
+            start_time = time.time()
+
         print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
-        site.get()
+        status_code = site.get()
+        if(status_code != "200"):
+            continue
         tree = html.fromstring(str(site))
         tree.make_links_absolute(url)
 
@@ -42,14 +49,7 @@ def get_current():
             notify(new, restock)
 
         db.insert_current(prod_names, prod_urls)
-            
-#        time.sleep(1)
-
-        if (time.time() - start_time)/60 > 25:
-            print("Pinging the app")
-            requests.get("https://acrbot.herokuapp.com/")
-            start_time = time.time()
-        
+                
 if  __name__ == "__main__":
     db.create_tables()
     get_current()

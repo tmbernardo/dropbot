@@ -1,8 +1,9 @@
 from fbpage import page
 from fbmq import QuickReply, Template
 
-import json
 import os
+import re
+import json
 import dbhandler as db
 
 password = os.environ["PASSWORD"]
@@ -27,7 +28,7 @@ page.show_starting_button("Subscribe")
 
 def p_menu():
     acct_menu = {"title":"My Account", "type":"nested"}
-    menu = [{"locale": "default", "call_to_actions": [acct_menu]}]
+    menu = [{"locale": "default", "composer_input_disabled": False, "call_to_actions": [acct_menu]}]
     call_to_actions = []
 
     for button in Template.Buttons.convert_shortcut_buttons(acct_menu_btns):
@@ -93,6 +94,7 @@ def message_handler(event):
             db.delete_user(sender_id)
             page.send(sender_id, "Unsubbed, you may now delete the conversation")
     elif(state == 1):
+        message = re.sub("[\W+]", "", message.upper())
         deleted = db.delete_sub(sender_id, message)
         if(deleted):
             page.send(sender_id, "Deleted your item")
