@@ -63,7 +63,7 @@ def user_exists(user, sess=start_sess()):
     return sess.query(Users).filter(Users.fb_id==user).scalar()
 
 def prod_exists(prod, sess):
-    return sess.query(Products).filter(re.sub("[\W+]", "", Products.prod_name.upper()) == prod).scalar()
+    return sess.query(Products).filter(re.sub("[\W+]", "", str(Products.prod_name).upper()) == prod).scalar()
 
 def current_exists(prod_name, sess):
     return sess.query(Current).filter(Current.product.has(Products.prod_name==prod_name)).scalar()
