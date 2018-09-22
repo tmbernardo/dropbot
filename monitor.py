@@ -20,20 +20,14 @@ def notify(new, restock):
 def get_current():
     url = "https://acrnm.com"
     site = ProxyRequests(url)
-    start_time = time.time()
 
-    requests.get("https://acrbot.herokuapp.com/")
-    
     while(True):        
-        if (time.time() - start_time)/60 > 25:
-            print("Pinging the app")
-            requests.get("https://acrbot.herokuapp.com/")
-            start_time = time.time()
 
         print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
         status_code = site.get()
         
         if(status_code != 200):
+            print("Proxy or website is unresponsive. Trying again...")
             continue
         
         tree = html.fromstring(str(site))
