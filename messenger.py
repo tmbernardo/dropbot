@@ -29,6 +29,7 @@ quick_replies = [
 page.greeting("Click Get Started below to subscribe!!")
 page.show_starting_button("Subscribe")
 
+@app.before_first_request
 def p_menu():
     acct_menu = {"title":"My Account", "type":"nested"}
     menu = [{"locale": "default", "composer_input_disabled": False, "call_to_actions": [acct_menu]}]
@@ -51,8 +52,6 @@ def p_menu():
     acct_menu["call_to_actions"] = call_to_actions
 
     page._set_profile_property(pname="persistent_menu", pval=menu)
-
-p_menu()
 
 def handle_unsub(sender_id):
     page.send(sender_id, "You are unsubscribed, enter access code to subscribe")
@@ -87,12 +86,7 @@ def message_handler(event):
         handle_unsub(sender_id)
         return
     elif message == password and db.insert_user(sender_id):
-        if(page.send(sender_id, "Subbed to all products") == 200):
-            pass
-        else:
-            token = get_fb_token(app_id, app_secret)
-            os.environ["ACCESS_TOKEN"] = token
-            page = Page(os.environ["ACCESS_TOKEN"])
+        page.send(sender_id, "Subbed to all products")
 
     if(state == 0):
         if(message.lower() == "unsubscribe"):
@@ -174,13 +168,3 @@ def callback_clicked_yes_r(payload, event):
 @page.callback(['No'])
 def callback_clicked_no_r(payload, event):
     pass
-
-def get_fb_token(app_id, app_secret):
-    url = 'https://graph.facebook.com/oauth/access_token'       
-    payload = {
-        'grant_type': 'client_credentials',
-        'client_id': app_id,
-        'client_secret': app_secret
-    }
-    response = requests.post(url, params=payload)
-    return response.json()['access_token']
