@@ -27,7 +27,6 @@ quick_replies = [
 page.greeting("Click Get Started below to subscribe!!")
 page.show_starting_button("Subscribe")
 
-@page.before_first_request
 def p_menu():
     acct_menu = {"title":"My Account", "type":"nested"}
     menu = [{"locale": "default", "composer_input_disabled": False, "call_to_actions": [acct_menu]}]
@@ -166,3 +165,5 @@ def callback_clicked_yes_r(payload, event):
 @page.callback(['No'])
 def callback_clicked_no_r(payload, event):
     pass
+
+p_menu()
