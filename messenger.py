@@ -165,5 +165,3 @@ def callback_clicked_yes_r(payload, event):
 @page.callback(['No'])
 def callback_clicked_no_r(payload, event):
     pass
-
-p_menu()

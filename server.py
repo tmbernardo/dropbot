@@ -8,6 +8,10 @@ app = Flask(__name__)
 
 VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
 
+@app.before_first_request
+def _run_on_start():
+    messenger.p_menu()
+
 @app.route('/webhook', methods=['GET'])
 def validate():
     if request.args.get('hub.mode', '') == 'subscribe' and \
