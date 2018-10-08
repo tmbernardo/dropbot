@@ -11,7 +11,7 @@ class ProxyRequests:
         self.sockets = []
         self.url = url
         self.proxy = ""
-        self.request = ""
+        self.request = None
         self.headers = {}
         self.file_dict = {}
         self.status_code = ""
@@ -36,7 +36,7 @@ class ProxyRequests:
                 proxies = {"http": "http://" + current_socket, "https": "https://" + current_socket}
                 try:
                     request = requests.get(self.url, timeout=3.0, proxies=proxies)
-                    self.request = request.text
+                    self.request = request
                     self.headers = request.headers
                     self.status_code = request.status_code
                 except Exception as e:
@@ -46,7 +46,7 @@ class ProxyRequests:
             else:
                 print("Acquiring new sockets")
                 self.__acquire_sockets()
-        return self.status_code
+        return self.request
 
     # recursively try proxy sockets until successful POST
     def post(self, data):
@@ -120,7 +120,7 @@ class ProxyRequests:
         return str(self.proxy_used)
 
     def __str__(self):
-        return str(self.request)
+        return str(self.request.text)
 
 class ProxyRequestsBasicAuth(ProxyRequests):
     def __init__(self, url, username, password):
@@ -205,4 +205,4 @@ class ProxyRequestsBasicAuth(ProxyRequests):
                 self.post_file()
 
     def __str__(self):
-        return str(self.request)
+        return str(self.request.text)

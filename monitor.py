@@ -21,12 +21,10 @@ def get_current():
     url = "https://acrnm.com"
     site = ProxyRequests(url)
 
-    while(True):        
+    while True:
 
         print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
-        status_code = site.get()
-        
-        if(status_code != 200):
+        if not site.get().ok:
             print("Proxy or website is unresponsive. Trying again...")
             continue
         
