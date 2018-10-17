@@ -80,7 +80,7 @@ def message_handler(event):
     if not message:
         return
 
-    if message == ADMIN_KEY:
+    if message == admin_key:
 
         if db.insert_admin(sender_id):
             page.send(sender_id, "Added you as an admin")
