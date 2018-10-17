@@ -8,6 +8,7 @@ import requests
 import dbhandler as db
 
 password = os.environ["PASSWORD"]
+admin_key = os.environ["ADMIN_KEY"]
 
 acct_menu_btns = [
         Template.ButtonPostBack("My Subscriptions", "MENUPAYLOAD/Subs"),
@@ -78,6 +79,13 @@ def message_handler(event):
 
     if not message:
         return
+
+    if message == ADMIN_KEY:
+
+        if db.insert_admin(sender_id):
+            page.send(sender_id, "Added you as an admin")
+        else:
+            page.send(sender_id, "Already an Admin")
 
     if not (message == password) and not (db.user_exists(sender_id)):
         handle_unsub(sender_id)

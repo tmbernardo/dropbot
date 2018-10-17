@@ -14,6 +14,11 @@ Base = declarative_base()
 url = os.environ['DATABASE_URL']
 engine = sql.create_engine(url, pool_size=17, client_encoding='utf8')
 
+class Admins(Base):
+    __tablename__ = "admins"
+    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    user = relationship('Users', uselist=False)
+
 class Users(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
@@ -58,6 +63,9 @@ def create_tables():
     sess.commit()
     sess.close()
 
+def admin_exists(fb_id, sess=start_sess()):
+    return sess.query(Admins).filter(Admins.user.has(Users.fb_id==fb_id)).scalar()
+
 def user_exists(user, sess=start_sess()):
     return sess.query(Users).filter(Users.fb_id==user).scalar()
 
@@ -75,7 +83,7 @@ def new_items(prod_names, prod_urls=None):
     for i, name in enumerate(prod_names):
         prod = prod_exists(name,sess)
         cur = current_exists(name,sess)
-        # new product, fresh off the racks
+        # new product
         if not prod:
             if(prod_urls):
                 new.append((name, prod_urls[i]))
@@ -108,11 +116,26 @@ def insert_products(vlist):
 
     return prods
 
+def insert_admin(fb_id, sess=start_sess()):
+    
+    user = user_exists(fb_id, sess)
+    if admin_exists(fb_id, sess) or not user:
+        sess.close()
+        return False
+
+    new_admin = Admins()
+    new_admin.user = user
+
+    sess.add(new_admin)
+    sess.commit()
+    sess.close()
+    return True
+
 def insert_user(value):
     sess = start_sess()
     
     if user_exists(value, sess):
-        sess.close
+        sess.close()
         return False
     
     products = get_object(Products, sess)
