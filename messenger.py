@@ -80,12 +80,12 @@ def message_handler(event):
     if not message:
         return
 
-    if message == admin_key:
-
-        if db.insert_admin(sender_id):
-            page.send(sender_id, "Added you as an admin")
-        else:
-            page.send(sender_id, "Already an Admin")
+#    if message == admin_key:
+#
+#        if db.insert_admin(sender_id):
+#            page.send(sender_id, "Added you as an admin")
+#        else:
+#            page.send(sender_id, "Already an Admin")
 
     if not (message == password) and not (db.user_exists(sender_id)):
         handle_unsub(sender_id)
