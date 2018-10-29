@@ -18,7 +18,7 @@ def notify(new, restock):
         page.send(sub, "RESTOCK:\n"+"\n".join(list(zip(*restock[sub]))[1]))
 
 def alt_current(url, site, store_name, ppath, upath, prod_names, prod_urls):
-    print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
+    print("Checking if new products are on {} on proxy: {}".format(store_name, site.proxy_used))
     if not site.get().ok:
         print("Proxy or website is unresponsive. Trying again...")
         site.proxy_used = site.sockets.pop(0)
