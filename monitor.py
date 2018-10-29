@@ -17,22 +17,53 @@ def notify(new, restock):
     for sub in restock.keys():
         page.send(sub, "RESTOCK:\n"+"\n".join(list(zip(*restock[sub]))[1]))
 
+def alt_current(url, site, store_name, ppath, upath, prod_names, prod_urls):
+    print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
+    if not site.get().ok:
+        print("Proxy or website is unresponsive. Trying again...")
+        site.proxy_used = site.sockets.pop(0)
+        return False
+    
+    tree = html.fromstring(str(site))
+    tree.make_links_absolute(url)
+
+    prod_names.extend([store_name+pname for pname in tree.xpath(ppath)])
+    prod_urls.extend(tree.xpath(upath))
+
+    return True
+
+
+
 def get_current():
     url = "https://acrnm.com"
     site = ProxyRequests(url)
+    
+    comm = "https://commissarystores.com/collections/acronym"
+    comm_site = ProxyRequests(comm)
+    cppath = '//*[@id="mainContent"]/div/div[2]/div[1]/div/a/text()'
+    cupath = '//*[@id="mainContent"]/div/div[2]/div[1]/div/a/@href'
+    
+    failures = 0
 
     while True:
 
         print("Checking if new products are on ACRNM on proxy: {}".format(site.proxy_used))
         if not site.get().ok:
             print("Proxy or website is unresponsive. Trying again...")
+            failures += 1
+            site.proxy_used = site.sockets.pop(0)
             continue
+        else:
+            failures = 0
         
         tree = html.fromstring(str(site))
         tree.make_links_absolute(url)
 
         prod_names = tree.xpath("//div[@class='name']/text()")
         prod_urls = tree.xpath("//a[contains(concat(' ', normalize-space(@class), ' '), ' tile ')]/@href")
+
+        alt_current(comm, comm_site, "COMMISSARY", cppath, cupath, prod_names, prod_urls)
+
         new, restock = db.new_items(prod_names, prod_urls)
 
         if new:

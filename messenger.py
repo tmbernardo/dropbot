@@ -8,7 +8,7 @@ import requests
 import dbhandler as db
 
 password = os.environ["PASSWORD"]
-admin_key = os.environ["ADMIN_KEY"]
+#admin_key = os.environ["ADMIN_KEY"]
 
 acct_menu_btns = [
         Template.ButtonPostBack("My Subscriptions", "MENUPAYLOAD/Subs"),
