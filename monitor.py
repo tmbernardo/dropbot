@@ -38,11 +38,6 @@ def get_current():
     url = "https://acrnm.com"
     site = ProxyRequests(url)
     
-    comm = "https://commissarystores.com/collections/acronym"
-    comm_site = ProxyRequests(comm)
-    cppath = '//*[@id="mainContent"]/div/div[2]/div[1]/div/a/text()'
-    cupath = '//*[@id="mainContent"]/div/div[2]/div[1]/div/a/@href'
-    
     failures = 0
 
     while True:
@@ -61,8 +56,6 @@ def get_current():
 
         prod_names = tree.xpath("//div[@class='name']/text()")
         prod_urls = tree.xpath("//a[contains(concat(' ', normalize-space(@class), ' '), ' tile ')]/@href")
-
-        alt_current(comm, comm_site, "COMMISSARY", cppath, cupath, prod_names, prod_urls)
 
         new, restock = db.new_items(prod_names, prod_urls)
 
