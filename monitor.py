@@ -27,7 +27,7 @@ def alt_current(url, site, store_name, ppath, upath, prod_names, prod_urls):
     tree = html.fromstring(str(site))
     tree.make_links_absolute(url)
 
-    prod_names.extend([store_name+pname for pname in tree.xpath(ppath)])
+    prod_names.extend([store_name+pname.split() for pname in tree.xpath(ppath)])
     prod_urls.extend(tree.xpath(upath))
 
     return True
