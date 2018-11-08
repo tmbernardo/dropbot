@@ -32,7 +32,6 @@ def alt_current(url, site, store_name, ppath, upath, prod_names, prod_urls):
 
     return True
 
-
 def get_current():
     url = "https://acrnm.com"
     site = ProxyRequests(url)
