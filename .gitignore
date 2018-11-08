@@ -4,3 +4,4 @@ dburl.py
 !requirements.txt
 *.pyc
 database
+*.vscode
